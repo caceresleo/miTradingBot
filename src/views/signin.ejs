@@ -1,0 +1,21 @@
+<%- layout('layouts/main') %>
+
+<div class="container col-md-4 col-sm-12 text-center " id="signin_block">
+        <h2>Ingresa a tu cuenta</h2>
+        <form action="/signin" method="POST" >
+          <div class="mb-3 text-start">
+            <label for="emailsignin" class="form-label ">Email</label>
+            <input type="email" name="email" class="form-control" id="emailsignin" placeholder="Ingrese se email" aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">Sus datos son privados y no se comparten con nadie mas.</div>
+          </div>
+          <div class="mb-3 text-start">
+            <label for="signinpassword" class="form-label ">Contraseña</label>
+            <input type="password" name="password" class="form-control" id="signinpassword" >
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block mt-4 mb-3">Ingresar</button>
+        </form>
+
+</div> 
+
+

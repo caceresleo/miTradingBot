@@ -1,0 +1,120 @@
+	
+<%- layout('layouts/main') %>
+    <%- include("../orejetas" )%>   
+
+<div class="container col-md-12">
+
+			<div class="card mb-3">
+			  <h2 class="card-header text-center" style="color: black;">Busqueda de Precios actuales</h2>
+			  <div class="card-body">
+			    <h5 class="card-title" style="color: black;">Siguiendo el ejemplo del gráfico, seleccionamos el activo al que queremos averiguar el precio actual</h5>
+			    <h6 class="card-subtitle text-muted" style="color: black;">Seleccionamos su Base y Cotizador para luego consultar precio</h6>
+			  </div>
+			  <img  src="./icons/ejemplo3.svg" style="width: 60%; margin-left: 20%">
+
+			  <form action="/cotizacion" method="post" id="formCotizar">
+			    <div class="row">
+					  <div class="col-md-2 offset-md-3">
+							<label for="tickerBase" class="form-label mt-4">Base:</label>
+							<select class="form-select" name="tickerBase"  id="tickerBase" form="formCotizar" value="ETH" style="color: black;">
+									<% for(var i=0; i<arregloBases.length; i++) {%>
+						               <option value=  <%= arregloBases[i] %>  > <%= arregloBases[i] %> </option>
+							         <% } %>	
+							</select>
+					   </div>  
+
+					  <div class="col-md-2 offset-md-1">
+
+							<label for="tickerCotizadores" class="form-label mt-4" >Cotizador:</label>
+							<select class="form-select" name="tickerCotizadores"  id="tickerCotizadores" form="formCotizar" value="USDT" style="color: black;">
+									<% for(var i=0; i<arregloCotizadores.length; i++) {%>
+						               <option value=  <%= arregloCotizadores[i] %>  > <%= arregloCotizadores[i] %> </option>
+							         <% } %>	
+							</select> 
+					   </div>  		    
+			   </div>		   
+			  		<div class="col-md-3 offset-md-5  ">
+			  			<button type="submit" class="btn btn-success bg-success mt-2" style="color: black;">Precio </button>
+			  		</div>
+
+			  </form>
+						<div class="form-group col-md-2 offset-md-5 mb-3">
+						  <fieldset>
+						    <label class="form-label mt-4" for="precioMercado">Precio de Mercado:</label>
+						    <input class="form-control" id="precioMercado" type="text"  readonly="" value="<%= cotizoTicker.ask  %>" style="color: black;">
+						  </fieldset>
+						</div>
+
+
+			    <div class="container">
+
+
+						<div class="form-group col-md-2 offset-md-5 col-sm-4 offset-sm-2 main.ejsmb-3">
+						  <fieldset>
+						    <label class="form-label mt-4" for="variacionDiaria">Variacion diaria :</label>
+							<% if (parseFloat(cotizoTicker.percentage)>0) { %>
+						    <input class="form-control" id="variacionDiaria" type="text"  readonly="" value="<%= cotizoTicker.percentage  %>  %" style="color: green;">					
+							<% } else { %>
+						    <input class="form-control" id="variacionDiaria" type="text"  readonly="" value="<%= cotizoTicker.percentage  %>  %" style="color: red;">					
+							<% } %>
+						  </fieldset>
+						</div>
+
+									<label class="form-label mt-3" for="barraPapertura">Precio de APERTURA el dia de Hoy:</label>
+									<div class="progress">
+									  <div class="progress-bar bg-dark  " id="barraPapertura" role="progressbar"   aria-valuemin="0" aria-valuemax="100"><%= cotizoTicker.open  %></div>		
+									</div>
+									<hr>
+									<label class="form-label mt-3" for="barraPmaximo">Precio MAXIMO del dia de Hoy:</label>
+									<div class="progress">
+									  <div class="progress-bar bg-danger " id="barraPmaximo" role="progressbar"   aria-valuemin="0" aria-valuemax="100"><%= cotizoTicker.high  %></div>
+									</div>
+									<hr>
+									<label class="form-label mt-3" for="barraPactual">Precio de Mercado actual:</label>
+									<div class="progress">
+									  <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" id="barraPactual" role="progressbar"   aria-valuemin="0" aria-valuemax="100"><%= cotizoTicker.ask  %></div>
+									</div>
+									<hr>
+									<label class="form-label mt-3  mb-3" for="barraPminimo">Precio MINIMO del dia de Hoy:</label>
+									<div class="progress">
+									  <div class="progress-bar bg-warning " id="barraPminimo" role="progressbar"   aria-valuemin="0" aria-valuemax="100"><%= cotizoTicker.low  %></div>
+									</div>
+									<hr>
+
+			    </div>
+
+			</div>
+
+</div>						
+<script>
+
+				var clasePrecioApertura = document.getElementById('barraPapertura');
+				var clasePrecioMaximo = document.getElementById('barraPmaximo');
+				var clasePrecioActual = document.getElementById('barraPactual');
+				var clasePrecioMinimo = document.getElementById('barraPminimo');
+         
+        var maximoValor = parseFloat(clasePrecioMaximo.textContent)*1.03;
+        	var minimoValor = parseFloat(clasePrecioMinimo.textContent)*0.93;
+        	var rangoTotal = maximoValor - minimoValor;
+        var actualValor = (parseFloat(clasePrecioActual.textContent)-minimoValor)*100/rangoTotal;
+        var aperturaValor = (parseFloat(clasePrecioApertura.textContent)- minimoValor)*100/rangoTotal ;
+/*
+        clasePrecioMaximo.setAttribute("aria-valuemin", minimoValor);
+        clasePrecioMinimo.setAttribute("aria-valuemin", minimoValor);   
+        clasePrecioActual.setAttribute("aria-valuemin", minimoValor);
+        clasePrecioApertura.setAttribute("aria-valuemin", minimoValor);
+
+        clasePrecioMaximo.setAttribute("aria-valuemax", maximoValor);
+        clasePrecioMinimo.setAttribute("aria-valuemax", maximoValor);   
+        clasePrecioActual.setAttribute("aria-valuemax", maximoValor);
+        clasePrecioApertura.setAttribute("aria-valuemax", maximoValor);
+*/
+        var precioActual = parseInt(actualValor).toString() + '%';
+        var precioApertura = parseInt(aperturaValor).toString()  + '%';
+
+        clasePrecioMaximo.style.width= '95%';
+        clasePrecioMinimo.style.width= '10%';   
+        clasePrecioActual.style.width= precioActual;
+        clasePrecioApertura.style.width= precioApertura;
+
+</script>

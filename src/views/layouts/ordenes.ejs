@@ -1,0 +1,51 @@
+<%- layout('layouts/main') %>
+    <%- include("../orejetas" )%>   
+
+<div class="container col-md-12">
+
+		<table class="table table-hover  mt-4  mb-3">
+			<thead class="bg-dark" style="color: white;">
+				<tr>
+					<th scope="col">Id</th>
+					<th scope="col">Fecha</th>
+					<th scope="col">TICKER</th>
+					<th scope="col">Precio</th>
+					<th scope="col">Tipo</th>
+					<th scope="col">Modo</th>
+				</tr>
+				
+			</thead>
+
+			<tbody>
+
+				
+
+					<% for(var i=0; i<ordenesAbiertas.length; i++) {%>
+
+						<tr class="table-info">
+							<th scope="row"><%= ordenesAbiertas[i].id %></th>
+					         <% let  horario =  new Date(ordenesAbiertas[i].datetime) %>
+
+					         <td><%= horario.getUTCDate()%>/<%= horario.getUTCMonth()%>/<%= horario.getFullYear()%>  - 
+					         <%= horario.getHours()%>:<%= horario.getMinutes()%>:<%= horario.getSeconds()%></td>
+					         <td><%= ordenesAbiertas[i].symbol %></td>
+
+					         <td><%= ordenesAbiertas[i].price %></td>
+					         <td><%= ordenesAbiertas[i].side %></td>
+					         <td><%= ordenesAbiertas[i].type %></td>
+
+					         <td><a href="/delete/<%= ordenesAbiertas[i].id %>">delete</a></td>
+
+
+
+
+
+			         	</tr>
+
+			         <% } %>
+
+			         
+
+		    </tbody>
+		</table>
+</div>
