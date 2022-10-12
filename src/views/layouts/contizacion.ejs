@@ -1,16 +1,15 @@
 	
 <%- layout('layouts/main') %>
-    <%- include("../orejetas" )%>   
 
-<div class="container col-md-12">
+<div class="container col-md-12 pb-4">
 
-			<div class="card mb-3">
+			<div class="card mb-3 mt-4">
 			  <h2 class="card-header text-center" style="color: black;">Busqueda de Precios actuales</h2>
 			  <div class="card-body">
 			    <h5 class="card-title" style="color: black;">Siguiendo el ejemplo del gráfico, seleccionamos el activo al que queremos averiguar el precio actual</h5>
 			    <h6 class="card-subtitle text-muted" style="color: black;">Seleccionamos su Base y Cotizador para luego consultar precio</h6>
 			  </div>
-			  <img  src="./icons/ejemplo3.svg" style="width: 60%; margin-left: 20%">
+			  <img  src="./icons/ejemplo3.svg" class="img-fluid img-thumbnail" alt="Responsive image">
 
 			  <form action="/cotizacion" method="post" id="formCotizar">
 			    <div class="row">
@@ -33,7 +32,7 @@
 							</select> 
 					   </div>  		    
 			   </div>		   
-			  		<div class="col-md-3 offset-md-5  ">
+			  		<div class="col-md-3 offset-md-5 mt-4">
 			  			<button type="submit" class="btn btn-success bg-success mt-2" style="color: black;">Precio </button>
 			  		</div>
 
