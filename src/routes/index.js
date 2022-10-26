@@ -30,17 +30,23 @@ if (!conexion) res.render('index');
   else res.render('fallaConexion');
 });
 
+
+
+
 router.get('/inicio',isAuthenticated, async (req, res, next) => {
 
 
-       var objetoParticular = req.user;
+     //  var objetoParticular = req.user;
 
     //   console.log("usuario que llega: ", objetoParticular)
-     const tasks = await Task.find({user_id: objetoParticular}); //toma todo el listado perteneciente a ese usuario
+   //  const tasks = await Task.find({user_id: objetoParticular}); //toma todo el listado perteneciente a ese usuario
 
+       var valoresparciales = exchange.valoresParciales()
 
-  res.render('inicio', {cotizador, tasks});
+  res.render('inicio', { valoresparciales});
 });
+
+
 
 router.get('/coins', async (req, res, next)=>{
 

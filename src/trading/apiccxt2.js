@@ -53,6 +53,7 @@ var margenSeguro = 0.00;
 //.................................................
 let cantidadVentas = 0;
 let cantidadCompras = 0;
+var startPrice = 0.00;
 
 var listadoCoinGecko = []; // arreglo con todos los elemenots de coingecko con el siguient formato:
 
@@ -148,6 +149,8 @@ async function bajarListadoGecko(){
 var deltaSuperior = 1;
 var deltaInferior = 1;
 var deltaPrecio=1;
+var deltaPrecio2=1;
+
 var montoRemanente = 0.00;
 var idOrdenRemanente = '0000';
 
@@ -176,6 +179,7 @@ async function ejecutarOrden(variables, ticker, base, cotizador, usuario){
 
 		if (variables.tendencia == 'alzista' || variables.tendencia == 'estable') {
                deltaPrecio=2;
+               deltaPrecio2=2;
                if (variables.tendencia == 'alzista') {
                		deltaSuperior = 1.5;
                }else{
@@ -191,9 +195,12 @@ async function ejecutarOrden(variables, ticker, base, cotizador, usuario){
       const market = `${config.base}/${config.cotizador}`;
 
 
-    var precioNuevaCompra = config.initPrice
+
+    var precioNuevaCompra = config.initPrice;
+    startPrice = precioNuevaCompra;
     const monto =  (config.ammountOperation / precioNuevaCompra  - 0.00001).toFixed(5);
 
+                            console.log(`valor que llega de ammountOperation ${config.ammountOperation} : y de la compra ${precioNuevaCompra}`);
 
     if(config.order === "Compra"){  
               for(var i=1; i <= deltaPrecio; i++){
@@ -254,7 +261,7 @@ return sumatoria;
 
 async function cargaBasedatos(ordenActual, orden, usuario){
      var objetoParticular = usuario._id;
-     const total = await Task.find({user_id: objetoParticular});
+     const total = await Task.find({user_id: objetoParticular});//total tiene la lista de ordenes de ese usuario en particular
      var number = total.length;
      var task = "";
       if (ordenActual.side === 'buy') {
@@ -276,19 +283,19 @@ async function cargaBasedatos(ordenActual, orden, usuario){
           // var objetoParticular = usuario._id;
           // const tasks = await total.findOne({user_id: objetoParticular}); //deberia tener una lista con los trading de un usuario en particular
 
-           console.log("contenido del usuario en particular es: ", total);
+           console.log("contenido del usuario en particular es: ", Task);
 
             if(ordenActual.id != orden.id){
            //buscar la orden de compra a la que corresponde esta venta.
               try{
-                task = await total.findOne({'ventaId': ordenActual.id});
+                task = await Task.findOne({'ventaId': ordenActual.id});
                 task.modo = ordenActual.type;
               }catch(err){
                   task.modo = "stopLoss";
               }
            }else { //caso de venta de orden remanente
               try{
-                task = await total.findOne({'compraId': idOrdenRemanente});
+                task = await Task.findOne({'compraId': idOrdenRemanente});
                 task.modo = "ventaInicial";
               }catch(err){
                   console.log("NO SE PUDO ENCONTRAR LA COMPRA REMANENTE", err);
@@ -298,18 +305,13 @@ async function cargaBasedatos(ordenActual, orden, usuario){
             task.precioVenta = ordenActual.price;
             const margen = ordenActual.price*ordenActual.amount - task.montocompra;
             task.margen = margen; 
-             await total.findByIdAndUpdate(task._id, task);       
+                       console.log("contenido de task: ", task);
+
+             await Task.findByIdAndUpdate(task._id, task);       
              
          }
   }
 
-
-//...........VARIABLES A COMPARTIR.........................................
-
-function valoresParciales(){
-
-}
-//.........................................................................  
 
 // se envia el mercado y el precio al que se va a vendar el remanente 
 async function ventaRemanente(market, precio, usuario){
@@ -340,6 +342,8 @@ var ventapuchito = true;
 var market ='';
 var comisionOperacion = 0.075/100;// 
 var vueltaRutinaExterna = false;
+var limiteInferior = false;
+var ultimaVenta = 0;
 
 //............................................................................................................................
 async function inicioTrading(parametrosIniciales, usuario){
@@ -369,25 +373,37 @@ if(condIniciales){
 
 
 console.log("el margen seguro es : ", margenSeguro);
-if(!vueltaRutinaExterna){
+if(!vueltaRutinaExterna && !limiteInferior){ //limite inferior es una vuelta de una rutina de atentoPreciosSuperiores() para que vuelva y pueda detectar el cambio de ordenes
   await equalOrders(market, usuario); //carga los valores de  openOrders  y fixedOrders
   vueltaRutinaExterna = false;
+  limiteInferior = false;
 } 
  let foundOrder = {};
 console.log("el stop loss sera a : ", stopLossPrice);
 var tiempoCoinGecko = 10;
+var actualizar = true;
+var cambioOrdenes = false;
 bucleInicial = setInterval(async()=>{
 
   tiempoCoinGecko--;
 
                       try{
                            openOrders = await binanceClient.fetchOpenOrders(market);
+                            if (actualizar){
+                              actualizarOrdenesAbiertas(openOrders);
+                            } 
+
                           }catch(err){
                         console.log("hubo un error al intentar consultar las ordenes abiertas");
                         fallosLectura++;
                         } 				
-
+               if(cambioOrdenes) {
+                                await equalOrders(market, usuario); //carga los valores de  openOrders  y fixedOrders
+                                console.log("ACTUALIZACION FORZADA DE LAS ORDENES, ALGO ANDUVO MAL");
+                                cambioOrdenes = false;  
+                              }
               if(openOrders.length != fixedOrders.length) {
+                   cambioOrdenes = true;
                         clearInterval(bucleInicial);
 
                         if (openOrders.length > fixedOrders.length) foundOrder = searchOrderPrueba(openOrders, fixedOrders); 
@@ -404,22 +420,24 @@ bucleInicial = setInterval(async()=>{
                         await equalOrders(market, usuario); //carga los valores de  openOrders  y fixedOrders
                         if(accion != 'vacio'){}
                         if(accion == 'stoplossFunction'){
-                          await ejecutaStopLoss(market, foundOrder[0].price, usuario);
+                          await actualizarOrdenesAbiertas(openOrders);
+                          await ejecutaStopLoss(market, foundOrder[0].price, usuario);                          
                          // inicioTrading(condicionesIniciales);
                         }
 
                         if(accion == 'preciossuperiores'){
+                          await actualizarOrdenesAbiertas(openOrders);
                           await atentoPreciosSuperiores(market, foundOrder[0].price, usuario); 
                           // inicioTrading(condicionesIniciales);
                         } 
 
                         if(accion == 'normal'){
+                          await actualizarOrdenesAbiertas(openOrders);                          
                           inicioTrading(condicionesIniciales, usuario); 
                         }  
                                                
 
               }// del if openOrders.length != fixedOrders.length
-
 
         console.log("precio de referencia actual: ", precioReferencia); 
         console.log("contador: ", contador++);
@@ -429,7 +447,8 @@ bucleInicial = setInterval(async()=>{
         console.log(`TASA DE FALLOS ${tasafallos} % `);
         if(tiempoCoinGecko <= 0){
              tiempoCoinGecko = 40;
-                var cotizacion = await precioCoinGecko(condicionesIniciales.base);   
+                var cotizacion = await precioCoinGecko(condicionesIniciales.base);  
+                precioMercado = cotizacion; 
                 console.log("---------------------------------------PRECIO CON COINGEKO: ", cotizacion);  
                 if (precioMaximo < cotizacion) precioMaximo = cotizacion; 
                 console.log("PRECIO MAXIMO DETECTADO: ", precioMaximo); 
@@ -439,7 +458,7 @@ bucleInicial = setInterval(async()=>{
                               console.log("monto de la ultima venta ejecutada: ", ultimaVenta); 
 
               var coeficiente = precioMaximo - (precioMaximo-ultimaVenta)/3;
-                                            console.log("LA VENTA DEL REMANENTE SE HARIA CUANDO BAJE EL VALOR DE : ", coeficiente); 
+                 console.log("LA VENTA DEL REMANENTE SE HARIA CUANDO BAJE EL VALOR DE : ", coeficiente); 
 
               var cantidadOrdVent = 0;
                   if(cotizacion < coeficiente) {
@@ -450,17 +469,54 @@ bucleInicial = setInterval(async()=>{
                       await ventaRemanente(market, cotizacion, usuario);
                       ventapuchito=false;
                       cantidadOrdVent=0;
+                      }
                     }
                   }
-            }
      
            }
       }, 1500 );
 
 }
 
+//....ACTUALIZAR LOS VALORES A MOSTRAR EN INICIO..........................
 
-var ultimaVenta = 0;
+async function actualizarOrdenesAbiertas(ordenesActivas){
+    listaVentas=[];
+    listaCompras=[];
+    ordenesActivas.forEach((arr,index) => {
+             if (arr.side === 'sell') {
+                listaVentas.push(parseFloat(arr.price.toFixed(2)));
+            }else{
+                listaCompras.push(parseFloat(arr.price.toFixed(2)));
+            }
+          simboloActual = arr.symbol;   
+          });
+      actualizar=false 
+}
+
+//...........VARIABLES A COMPARTIR.........................................
+  var listaCompras =[];
+  var listaVentas = []; 
+  var simboloActual = '';
+  var datoPrecioTicker={};
+function valoresParciales(){  
+  //  datoPrecioTicker   variable global que se carga con la funcion precioActual(mercado, usuario)
+  var valoresActuales = {
+        compras : listaCompras,
+        ventas: listaVentas,
+        maximoPrecio: datoPrecioTicker.high,
+        precio: precioMercado,
+        minimoPrecio: datoPrecioTicker.low,
+        aperturaPrecio: datoPrecioTicker.open,
+        SL: stopLossPrice,
+        simbolo: simboloActual, 
+        precioInicio:  startPrice         
+  }
+
+return valoresActuales;
+}
+//......................................................................... 
+
 async function ejecutoAccion(foundOrder, usuario){
 
    const binanceClient = cliente(usuario);
@@ -513,21 +569,22 @@ async function ejecutoAccion(foundOrder, usuario){
                                }  
 
                             //... cargo en base de datos la orden de compra que se ejecuto........... 
-                            var cantidad = deltaPrecio;
+                            var cantidad = deltaPrecio2;
                           for(var i=0; i < cantidad; i++){
-                                if(i == 1) {
-                                deltaPrecio = 1;  // para que haga esta doble carga en base de datos solo una vez
+                                if(i > 0) {
+                                deltaPrecio2 = 1;  // para que haga esta doble carga en base de datos solo una vez
                                 ordenVentaActual.id = '00000000000000';
-                                } 
-                                  try{
-                                     cargaBasedatos(foundOrder[i], ordenVentaActual, usuario) ;  //foundOrder es la orden que se ejecuto, y ordenVentaActual es la orden de venta en consecuencia       
-                                                         
-                                  }catch(err){
-                                        console.log("no se puedo realizar la operacion de carga en base de datos");
-                                        console.log("motivo: ", err);                 
-                                  }
+                                }                             
+                            try{
+                               await   cargaBasedatos(foundOrder[i], ordenVentaActual, usuario) ;  //foundOrder es la orden que se ejecuto, y ordenVentaActual es la orden de venta en consecuencia       
+                                console.log("se mando a cargar en base de datos con la siguiente id de venta: ", ordenVentaActual.id);
+                                                    
+                                 }catch(err){
+                                  console.log("no se puedo realizar la operacion de carga en base de datos");
+                                  console.log("motivo: ", err);                 
+                                   }
                              }     
-                            //..................................................................................
+  //..................................................................................
 
                          console.log(`--------------se haria una nueva compra al precio de ${precioInferior} si no esta en array de compras`);
                          
@@ -623,7 +680,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
   //clearInterval(bucleInicial); 
    // var primeraentrada=true;
 		var priceAdviceCheck = 15000;
-        var limiteBajo = ultimoPrecio*(1+condicionesIniciales.spread*deltaSuperior); //nivel de precio a partir del cual activa nuevamente bucle inicial
+        var limiteBajo = ultimoPrecio*(1-condicionesIniciales.spread); //limite inferior a partir del cual quiero que corte la funcion atentopreciossuperiores
         var nuevoNivel = parseFloat(((1+ condicionesIniciales.spread + condicionesIniciales.spread/2)*precioReferencia).toFixed(2)); //precioReferencia + 1.5%
         var nuevoPrecio = parseFloat(((1+condicionesIniciales.spread*deltaSuperior)*precioReferencia).toFixed(2));//  precioReferencia + 1%
         var precioCompra= parseFloat(((1-condicionesIniciales.spread)*precioReferencia).toFixed(2));// precioReferencia - 1%
@@ -636,6 +693,8 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
             var cotizacion=0.00;
             try{
                       console.log("SE ESTA HACIENDO RUTINA DE PRECIOS SUPERIORES");
+                      console.log("SE HARA ESTA RUTINA HASTA EL VALOR DE limitebajo: ", limiteBajo);
+
                       cotizoTicker = await precioActual(datoMercado, usuario);
                       cotizacion = cotizoTicker.ask;
             }catch(e){
@@ -653,6 +712,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
 
                 if(precioMercado < limiteBajo){ //salgo de stoploss, cotizacion supero un limite en donde deveria haberse ejecutado la venta de la ultima compra
                   vueltaRutinaExterna = true;
+                  limiteInferior = true;
                   inicioTrading(condicionesIniciales, usuario);
                   clearInterval(preciosSuperiores); 
                   console.log(".............CORTO DE HACER LECTURA PRECIOS SUPERIORES ");
@@ -922,10 +982,11 @@ async function procesoCancelar(market, usuario){
                   console.log("se vendieron todas las ordenes por stopLoss a precio de mercado!");
                   console.log("lo que devuelve las ordenes vendidas: ", ordenVentaTotal);
             // cargo base de datos
-               for (var i = 0; i < ordenesActuales.length; i++) {
 
            var objetoParticular = usuario._id;
-           const tasks = await Task.findOne({_id: objetoParticular}); //deberia tener una lista con los trading de un usuario en particular
+           const tasks = await Task.find({_id: objetoParticular}); //deberia tener una lista con los trading de un usuario en particular
+
+               for (var i = 0; i < ordenesActuales.length; i++) {
 
 
                   var task = await tasks.findOne({'ventaId': idOrdenesVenta[i]});
@@ -1045,7 +1106,6 @@ async function precioCoinGecko(base){
   var price = 0.000;
   var baseMinusculas = base.toLowerCase();
    var valor='';  
-   console.log("LISTADO DE COINGECKO TIENE ESTA CANTIDAD DE ELEMENTOS: ", listadoCoinGecko.length);
    for(var i=0 ; i < listadoCoinGecko.length; i++){
     if (listadoCoinGecko[i].symbol == baseMinusculas) {
          var elemento = {
@@ -1060,7 +1120,6 @@ async function precioCoinGecko(base){
  
     try{
     price = await coinGecko.precioCripto(elementoGecko[0].ticker);
-
     }catch(e){
   console.log("no se pudo leer el precio con coinGecko por el siguiente error: ", e.message);
     }
@@ -1071,9 +1130,8 @@ async function precioCoinGecko(base){
 
 async function precioActual(ticker, usuario){
     const binanceClient = cliente(usuario);
-
-
-  return await binanceClient.fetchTicker(ticker);
+    datoPrecioTicker = await binanceClient.fetchTicker(ticker);
+  return datoPrecioTicker
 }
 
 
@@ -1083,12 +1141,12 @@ async function cotizacionActual(ticker){
            axios.get('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=usd')
         ]);
 
-	const cotizoTicker = results[0].data.ethereum.usd / results[1].data.tether.usd;
+	const precioTicker = results[0].data.ethereum.usd / results[1].data.tether.usd;
 
-	console.log("cotizacion: ", cotizoTicker);
+	console.log("cotizacion: ", precioTicker);
 		console.log("results: ", results);
 
-	return cotizoTicker;
+	return precioTicker;
 }
 
 async function equalOrders(market, usuario) {

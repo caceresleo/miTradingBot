@@ -4,8 +4,153 @@
 <%- layout('layouts/main') %>
 
 
-  <div class="container col-md-12">
+<div class="container col-md-12" id="paginaInicio">
 
 <h1>ACA ESTARIA LA PAGINA DE INICIO DEL USUARIO LOGEADO </h1>
+<p>valores parciales que llegan:</p>
+<br>
+<input id="valorInput" type="text" value='{"listaCompras":[<%=  valoresparciales.compras  %>],"listaVentas":[<%= valoresparciales.ventas %>],"precioActual":<%= valoresparciales.precio || 00000 %>,"precioMinimo":<%= valoresparciales.minimoPrecio || 00000 %>,"precioMaximo": <%= valoresparciales.maximoPrecio  || 00000 %>,"precioApertura":<%= valoresparciales.aperturaPrecio || 00000 %>,"stoploss":<%= valoresparciales.SL || 00000 %>,"precioInicio":<%= valoresparciales.precioInicio || 00000 %>}'>
+
+<p>compras en espera: <%= valoresparciales.compras  %>  </p>
+<br>
+<p>ventas en espera: <%= valoresparciales.ventas  %></p>
+<br>
+<p>Precio actual de mercado para <%= valoresparciales.simbolo  %> : <%= valoresparciales.precio  %></p>
+<br>
+<p>Precio minimo del dia de <%= valoresparciales.simbolo  %> : <%= valoresparciales.minimoPrecio  %></p>
+<br>
+<p>Precio maximo del dia de <%= valoresparciales.simbolo  %> : <%= valoresparciales.maximoPrecio  %></p>
+<br>
+<p>Precio con el que <%= valoresparciales.simbolo  %> abrio el mercado : <%= valoresparciales.aperturaPrecio  %></p>
+<br>
+<p>Valor de stop loss: <%= valoresparciales.SL  %> </p>
+<br>
+<p>Valor de Precio de Inicio de operaciones: <%= valoresparciales.precioInicio  %> </p>
+<br>
+
+<section id="cajalienzo">
+    <canvas id="lienzo" width= "1000px" height="600px" style="border: 1px solid #00000">
+        Su navegador no soporta el elemento Canvas para ver el gráfico
+    </canvas>
+</section>
 
 </div>  
+
+<script>
+
+function iniciar(){
+
+        var paginaInicio = document.getElementById('paginaInicio');
+        var anchoPagina = paginaInicio.clientWidth;
+        var altoPagina = paginaInicio.clientHeight;
+
+        console.log("ancho de la pagina: ", anchoPagina);
+        console.log("alto de la pagina: ", altoPagina);
+
+    
+    var json = document.getElementById("valorInput").value;
+    var valores = JSON.parse(json);
+/*    
+lo que contiene valores... Object { listaCompras: [], listaVentas: [], precioActual: 0, precioMinimo: 1334.94, precioMaximo: 1512.01, precioApertura: 1338.76, stoploss: 0, precioInicio: 0 }
+  */  console.log("valor de lista de compras 2 :", valores);
+
+    var canvas = document.getElementById('lienzo');
+    var ctx = canvas.getContext('2d'); 
+
+    var txt = document.getElementById('lienzo').getContext('2d');
+
+
+    var precioActual= parseInt( valores.precioActual); 
+    var precioMinimo= parseInt( valores.precioMinimo);
+    var precioMaximo= parseInt( valores.precioMaximo);
+    var precioApertura= parseInt( valores.precioApertura);
+    var stopLoss= parseInt( valores.stoploss);
+    var listaCompras= valores.listaCompras;
+    var listaVentas= valores.listaVentas;  
+
+
+let alto = canvas.height;
+let ancho = canvas.width;
+
+let aperturaPrecios= (precioMaximo - precioMinimo)*1.15;
+
+let y_base= alto*0.95;
+let y_maximo=aperturaPrecios*0.10;
+let y_minimo=aperturaPrecios*0.85;
+
+
+console.log("aperturaPrecios: ", aperturaPrecios);
+console.log("precio base: ", y_base);
+
+//console.log("ubicacion coordenadas de y_base: ", posicionY(y_base, precioMaximo,precioMinimo,alto));
+
+
+
+    txt.font = "bold 20px sans-serif";
+    txt.fillStyle = "red";
+    txt.fillText("Precios", 20, 20);  
+
+        txt.fillText("Precios", 200, 200);  
+
+
+    canvas.style.backgroundColor = 'white'; 
+   // canvas.style.width = anchoPagina;
+
+  console.log("lo que devuelve la funcion maximo: ", posicionY(precioMaximo, precioMaximo,precioMinimo,alto));
+  
+  console.log("lo que devuelve la funcion minimo: ", posicionY(precioMaximo, precioMaximo,precioMinimo,alto));
+
+// Eje x del 0
+ctx.beginPath();
+ctx.moveTo(30,posicionY(precioMaximo, precioMaximo,precioMinimo,alto)); //final
+ctx.lineTo(30,y_base); //origen
+ctx.strokeStyle = "red";
+ctx.lineWidth=5;
+ctx.stroke();   
+
+// Eje x del 0
+ctx.beginPath();
+ctx.moveTo(80,posicionY(precioApertura, precioMaximo,precioMinimo,alto));
+ctx.lineTo(80,y_base);
+ctx.strokeStyle = "black";
+ctx.lineWidth=5;
+ctx.stroke(); 
+
+// Eje x del 0
+ctx.beginPath();
+ctx.moveTo(130,posicionY(precioMinimo, precioMaximo,precioMinimo,alto));
+ctx.lineTo(130,y_base);
+ctx.strokeStyle = "green";
+ctx.lineWidth=5;
+ctx.stroke(); 
+
+var grid_size = 20;
+var x_axis_size = ancho-(2*grid_size);
+var y_axis_size = alto-(2*grid_size);
+var x_cero = 100;
+var y_cero = 550;
+
+
+
+ctx.beginPath();
+ctx.arc(200,posicionY(1500, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
+ctx.stroke();
+
+
+
+}
+
+function posicionY(coordenada, precioMaximo,precioMinimo,alto){
+   // let y_base= alto*0.95;
+
+
+    let aperturaPrecios= (precioMaximo - precioMinimo)*1.15;
+    let posicion=coordenada - precioMinimo;
+
+    return alto*0.90 - posicion*alto*0.95/aperturaPrecios;
+}
+
+window.addEventListener("load", iniciar, false);
+
+
+</script>
