@@ -58,16 +58,18 @@ lo que contiene valores... Object { listaCompras: [], listaVentas: [], precioAct
     var ctx = canvas.getContext('2d'); 
 
     var txt = document.getElementById('lienzo').getContext('2d');
+    var txtprecios = document.getElementById('lienzo').getContext('2d');
 
 
     var precioActual= parseInt( valores.precioActual); 
     var precioMinimo= parseInt( valores.precioMinimo);
     var precioMaximo= parseInt( valores.precioMaximo);
     var precioApertura= parseInt( valores.precioApertura);
-    var stopLoss= parseInt( valores.stoploss);
+ //   var stopLoss= parseInt( valores.stoploss);
     var listaCompras= valores.listaCompras;
     var listaVentas= valores.listaVentas;  
 
+    var stopLoss= 1500;
 
 let alto = canvas.height;
 let ancho = canvas.width;
@@ -84,9 +86,11 @@ console.log("precio base: ", y_base);
 
 //console.log("ubicacion coordenadas de y_base: ", posicionY(y_base, precioMaximo,precioMinimo,alto));
 
+    txtprecios.font = "bold 12px Arial";
+    txtprecios.fillStyle = "red";
+    txtprecios.fillText(`StopLoss: ${stopLoss}`, 200, posicionY(stopLoss, precioMaximo,precioMinimo,alto)-10);  
 
-
-    txt.font = "bold 20px sans-serif";
+    txt.font = "normal 20px sans-serif";
     txt.fillStyle = "red";
     txt.fillText("Precios", 20, 20);  
 
@@ -124,12 +128,13 @@ ctx.strokeStyle = "green";
 ctx.lineWidth=5;
 ctx.stroke(); 
 
-var grid_size = 20;
-var x_axis_size = ancho-(2*grid_size);
-var y_axis_size = alto-(2*grid_size);
-var x_cero = 100;
-var y_cero = 550;
-
+// Eje stopLoss
+ctx.beginPath();
+ctx.moveTo(ancho,posicionY(stopLoss, precioMaximo,precioMinimo,alto)); //punto final
+ctx.lineTo(30,posicionY(stopLoss, precioMaximo,precioMinimo,alto));  //origen
+ctx.strokeStyle = "red";
+ctx.lineWidth=3;
+ctx.stroke(); 
 
 
 ctx.beginPath();
