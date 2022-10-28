@@ -245,12 +245,12 @@ return config;
 
 async function balanceBD (usuario) {
 
-  var objetoParticular = usuario._id;
-  const tasks = await Task.findOne({_id: objetoParticular}); //deberia tener una lista con los trading de un usuario en particular
+ // var objetoParticular = usuario._id;
+//  const tasks = await Task.findOne({_id: objetoParticular}); //deberia tener una lista con los trading de un usuario en particular
   var task = "";
   var sumatoria = 0.00;
   for (var i = 0; i < ordenesBD.length; i++) {
-    task =  await tasks.findOne({'compraId': ordenesBD[i]});
+    task =  await Task.findOne({'compraId': ordenesBD[i]});
     console.log("suma el siguiente valor: ",parseFloat(task.margen));
     sumatoria += parseFloat(task.margen);
   }
@@ -475,6 +475,13 @@ bucleInicial = setInterval(async()=>{
      
            }
       }, 1500 );
+
+}
+
+function anularOperaciones(){
+  clearInterval(bucleInicial);
+  clearInterval(preciosSuperiores);
+  clearInterval(inicioStop);
 
 }
 
@@ -983,13 +990,10 @@ async function procesoCancelar(market, usuario){
                   console.log("lo que devuelve las ordenes vendidas: ", ordenVentaTotal);
             // cargo base de datos
 
-           var objetoParticular = usuario._id;
-           const tasks = await Task.find({_id: objetoParticular}); //deberia tener una lista con los trading de un usuario en particular
-
                for (var i = 0; i < ordenesActuales.length; i++) {
 
 
-                  var task = await tasks.findOne({'ventaId': idOrdenesVenta[i]});
+                  var task = await Task.findOne({'ventaId': idOrdenesVenta[i]});
 
                    // task.fechaVenta = ordenCancelar[i].datetime;
                     task.precioVenta = ordenVentaTotal.price;
@@ -999,7 +1003,7 @@ async function procesoCancelar(market, usuario){
 
                       try{
 
-                          await tasks.findByIdAndUpdate(task._id, task);
+                          await Task.findByIdAndUpdate(task._id, task);
                          console.log(`SE ACTUALIZÓ la base de datos con el id  ${task.numero}, linea 1154`);
 
                       }catch(err){

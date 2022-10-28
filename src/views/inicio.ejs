@@ -65,11 +65,11 @@ lo que contiene valores... Object { listaCompras: [], listaVentas: [], precioAct
     var precioMinimo= parseInt( valores.precioMinimo);
     var precioMaximo= parseInt( valores.precioMaximo);
     var precioApertura= parseInt( valores.precioApertura);
- //   var stopLoss= parseInt( valores.stoploss);
+    var stopLoss= parseInt( valores.stoploss);
     var listaCompras= valores.listaCompras;
     var listaVentas= valores.listaVentas;  
 
-    var stopLoss= 1500;
+  //  var stopLoss= 1500;
 
 let alto = canvas.height;
 let ancho = canvas.width;
@@ -104,7 +104,7 @@ console.log("precio base: ", y_base);
   
   console.log("lo que devuelve la funcion minimo: ", posicionY(precioMaximo, precioMaximo,precioMinimo,alto));
 
-// Eje x del 0
+// Eje precio Maximo 
 ctx.beginPath();
 ctx.moveTo(30,posicionY(precioMaximo, precioMaximo,precioMinimo,alto)); //final
 ctx.lineTo(30,y_base); //origen
@@ -112,7 +112,7 @@ ctx.strokeStyle = "red";
 ctx.lineWidth=5;
 ctx.stroke();   
 
-// Eje x del 0
+// Eje precio Apertura
 ctx.beginPath();
 ctx.moveTo(80,posicionY(precioApertura, precioMaximo,precioMinimo,alto));
 ctx.lineTo(80,y_base);
@@ -120,7 +120,7 @@ ctx.strokeStyle = "black";
 ctx.lineWidth=5;
 ctx.stroke(); 
 
-// Eje x del 0
+// Eje precio Minimo
 ctx.beginPath();
 ctx.moveTo(130,posicionY(precioMinimo, precioMaximo,precioMinimo,alto));
 ctx.lineTo(130,y_base);
@@ -136,10 +136,12 @@ ctx.strokeStyle = "red";
 ctx.lineWidth=3;
 ctx.stroke(); 
 
-
+// punto indicador del precio Actual
 ctx.beginPath();
-ctx.arc(200,posicionY(1500, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
+ctx.arc(300,posicionY(precioActual, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
 ctx.stroke();
+
+
 
 
 
