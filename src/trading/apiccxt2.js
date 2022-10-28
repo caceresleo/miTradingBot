@@ -1178,7 +1178,7 @@ function searchOrder(ordenes1, ordenes2) {
 }
 
 
-module.exports = {valoresParciales, balancesPropios, cotizacionActual, ejecutarOrden, inicioTrading, ordenesAbiertas, cancelaOperacion, precioActual, bajarListadoGecko}
+module.exports = {anularOperaciones, valoresParciales, balancesPropios, cotizacionActual, ejecutarOrden, inicioTrading, ordenesAbiertas, cancelaOperacion, precioActual, bajarListadoGecko}
    
 
 

@@ -198,6 +198,18 @@ router.get('/ordenes',isAuthenticated, async(req, res) =>{
    res.render('./layouts/ordenes',{ordenesAbiertas});
 });
 
+
+
+router.get('/anulartodo',isAuthenticated , async(req, res) =>{
+  try{
+      exchange.anularOperaciones();    
+  }catch(e){
+    console.log("no se pudo anular: ", e);
+  }
+
+  res.redirect('/ordenes');
+});
+
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()) {
     return next();

@@ -130,18 +130,43 @@ ctx.stroke();
 
 // Eje stopLoss
 ctx.beginPath();
-ctx.moveTo(ancho,posicionY(stopLoss, precioMaximo,precioMinimo,alto)); //punto final
-ctx.lineTo(30,posicionY(stopLoss, precioMaximo,precioMinimo,alto));  //origen
+ctx.moveTo(ancho*0.6,posicionY(stopLoss, precioMaximo,precioMinimo,alto)); //punto final
+ctx.lineTo(ancho*0.4,posicionY(stopLoss, precioMaximo,precioMinimo,alto));  //origen
 ctx.strokeStyle = "red";
 ctx.lineWidth=3;
 ctx.stroke(); 
 
 // punto indicador del precio Actual
 ctx.beginPath();
-ctx.arc(300,posicionY(precioActual, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
+ctx.arc(ancho*0.6,posicionY(precioActual, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
 ctx.stroke();
 
+for(let variable of listaCompras){
 
+        ctx.beginPath();
+        ctx.moveTo(ancho*0.6,posicionY(variable, precioMaximo,precioMinimo,alto)); //punto final
+        ctx.lineTo(ancho*0.4,posicionY(variable, precioMaximo,precioMinimo,alto));  //origen
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth=3;
+        ctx.stroke(); 
+
+        txtprecios.fillStyle = "blue";
+        txtprecios.fillText(`StopLoss: ${variable}`, 200, posicionY(variable, precioMaximo,precioMinimo,alto)-10); 
+
+}
+
+
+for(let variable of listaVentas){
+        ctx.beginPath();
+        ctx.moveTo(ancho*0.6,posicionY(variable, precioMaximo,precioMinimo,alto)); //punto final
+        ctx.lineTo(ancho*0.4,posicionY(variable, precioMaximo,precioMinimo,alto));  //origen
+        ctx.strokeStyle = "red";
+        ctx.lineWidth=3;
+        ctx.stroke(); 
+
+        txtprecios.fillStyle = "red";
+        txtprecios.fillText(`StopLoss: ${variable}`, 200, posicionY(variable, precioMaximo,precioMinimo,alto)-10);         
+}
 
 
 
