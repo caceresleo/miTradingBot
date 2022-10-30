@@ -94,8 +94,6 @@ console.log("precio base: ", y_base);
     txt.fillStyle = "red";
     txt.fillText("Precios", 20, 20);  
 
-        txt.fillText("Precios", 200, 200);  
-
 
     canvas.style.backgroundColor = 'white'; 
    // canvas.style.width = anchoPagina;
@@ -110,7 +108,10 @@ ctx.moveTo(30,posicionY(precioMaximo, precioMaximo,precioMinimo,alto)); //final
 ctx.lineTo(30,y_base); //origen
 ctx.strokeStyle = "red";
 ctx.lineWidth=5;
-ctx.stroke();   
+ctx.stroke(); 
+    txtprecios.font = "bold 12px Arial";
+    txtprecios.fillStyle = "red";
+    txtprecios.fillText(precioMaximo, 205, posicionY(stopLoss, precioMaximo,precioMinimo,alto));   
 
 // Eje precio Apertura
 ctx.beginPath();
@@ -119,6 +120,9 @@ ctx.lineTo(80,y_base);
 ctx.strokeStyle = "black";
 ctx.lineWidth=5;
 ctx.stroke(); 
+    txtprecios.font = "bold 12px Arial";
+    txtprecios.fillStyle = "black";
+    txtprecios.fillText(precioApertura, 85, posicionY(precioApertura, precioMaximo,precioMinimo,alto));  
 
 // Eje precio Minimo
 ctx.beginPath();
@@ -127,45 +131,49 @@ ctx.lineTo(130,y_base);
 ctx.strokeStyle = "green";
 ctx.lineWidth=5;
 ctx.stroke(); 
+    txtprecios.font = "bold 12px Arial";
+    txtprecios.fillStyle = "green";
+    txtprecios.fillText(precioMinimo, 135, posicionY(precioMinimo, precioMaximo,precioMinimo,alto));  
 
 // Eje stopLoss
 ctx.beginPath();
-ctx.moveTo(ancho*0.6,posicionY(stopLoss, precioMaximo,precioMinimo,alto)); //punto final
-ctx.lineTo(ancho*0.4,posicionY(stopLoss, precioMaximo,precioMinimo,alto));  //origen
+ctx.moveTo(ancho,posicionY(stopLoss, precioMaximo,precioMinimo,alto)); //punto final
+ctx.lineTo(ancho*0.2,posicionY(stopLoss, precioMaximo,precioMinimo,alto));  //origen
 ctx.strokeStyle = "red";
 ctx.lineWidth=3;
 ctx.stroke(); 
 
+
 // punto indicador del precio Actual
 ctx.beginPath();
-ctx.arc(ancho*0.6,posicionY(precioActual, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
+ctx.arc(ancho*0.2,posicionY(precioActual, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
 ctx.stroke();
 
 for(let variable of listaCompras){
 
         ctx.beginPath();
-        ctx.moveTo(ancho*0.6,posicionY(variable, precioMaximo,precioMinimo,alto)); //punto final
-        ctx.lineTo(ancho*0.4,posicionY(variable, precioMaximo,precioMinimo,alto));  //origen
+        ctx.moveTo(ancho,posicionY(variable, precioMaximo,precioMinimo,alto)); //punto final
+        ctx.lineTo(ancho*0.2,posicionY(variable, precioMaximo,precioMinimo,alto));  //origen
         ctx.strokeStyle = "blue";
         ctx.lineWidth=3;
         ctx.stroke(); 
-
+        txtprecios.font = "bold 12px Arial";
         txtprecios.fillStyle = "blue";
-        txtprecios.fillText(`StopLoss: ${variable}`, 200, posicionY(variable, precioMaximo,precioMinimo,alto)-10); 
+        txtprecios.fillText(`Compra: ${variable}`, 200, posicionY(variable, precioMaximo,precioMinimo,alto)-10); 
 
 }
 
 
 for(let variable of listaVentas){
         ctx.beginPath();
-        ctx.moveTo(ancho*0.6,posicionY(variable, precioMaximo,precioMinimo,alto)); //punto final
-        ctx.lineTo(ancho*0.4,posicionY(variable, precioMaximo,precioMinimo,alto));  //origen
+        ctx.moveTo(ancho,posicionY(variable, precioMaximo,precioMinimo,alto)); //punto final
+        ctx.lineTo(ancho*0.2,posicionY(variable, precioMaximo,precioMinimo,alto));  //origen
         ctx.strokeStyle = "red";
         ctx.lineWidth=3;
         ctx.stroke(); 
-
+        txtprecios.font = "bold 12px Arial";
         txtprecios.fillStyle = "red";
-        txtprecios.fillText(`StopLoss: ${variable}`, 200, posicionY(variable, precioMaximo,precioMinimo,alto)-10);         
+        txtprecios.fillText(`Venta: ${variable}`, 200, posicionY(variable, precioMaximo,precioMinimo,alto)-10);         
 }
 
 

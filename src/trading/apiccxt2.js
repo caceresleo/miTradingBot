@@ -379,7 +379,7 @@ if(!vueltaRutinaExterna && !limiteInferior){ //limite inferior es una vuelta de 
   limiteInferior = false;
 } 
  let foundOrder = {};
-console.log("el stop loss sera a : ", stopLossPrice);
+console.log("el stop loss es de : ", stopLossPrice);
 var tiempoCoinGecko = 10;
 var actualizar = true;
 var cambioOrdenes = false;
@@ -731,7 +731,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                 console.log("SUPERO EL LIMITE DE PRECIO PREESTABLECIDO, REALIZAMOS OPERACIONES CORRESPONDIENTES ");
 
               //  clearInterval(bucleInicial); //suspendo las actividades en el bucle inicial para evitar conflictos
-                stopLossPrice *= parseFloat((1+ condicionesIniciales.spread).toFixed(2));
+                stopLossPrice *= (1+ condicionesIniciales.spread);
                 console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice);
                 var menorValor = 1000000;
                 var indice = 0;
@@ -771,7 +771,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                inicioTrading(condicionesIniciales, usuario);
 
                clearInterval(preciosSuperiores);                
-              }
+              } // fin de "si precio de marcado supera al nuevo precio"
 
 		},priceAdviceCheck);	
 // inicioTrading(condicionesIniciales);//reinicio el proceso de trading que cancele para ralizar todas las operaciones
