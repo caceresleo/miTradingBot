@@ -812,7 +812,9 @@ async function ejecutaStopLoss(datoMercado, ultimoPrecio, usuario){
                       var montoTotal = await balanceBD(usuario);
                       var mensajeTexto = `vendio todas las ordenes por STOP LOSS,
                                           desde la ultima activación, el balance total fue de ${montoTotal.toFixed(2)} USDT`; 
-                      sendMessage(mensajeTexto, usuario);  
+                     console.log("mensaje que se mandaria por msn: ", mensajeTexto);  
+
+                     // sendMessage(mensajeTexto, usuario);  
                       clearInterval(inicioStop);      
                   }
 	},stopLossCheck );
