@@ -469,6 +469,12 @@ bucleInicial = setInterval(async()=>{
                       await ventaRemanente(market, cotizacion, usuario);
                       ventapuchito=false;
                       cantidadOrdVent=0;
+                      listadoOrdenesCompra.shift(); // borra el primer elemento del array que corresponde al remanente.
+                stopLossPrice *= (1+ condicionesIniciales.spread);
+                console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice); //elevo stop loss un nivel mas
+
+                 await elevoNivelCompra(market, precioReferencia, usuario);// actualizo nivel de compra a un nivel superior
+
                       }
                     }
                   }
@@ -542,6 +548,7 @@ async function ejecutoAccion(foundOrder, usuario){
 
            if (foundOrder[0].side === 'buy') {  //ORDEN QUE SE EJECUTÓ,en este caso se ejecuto una orden de compra. 
                      clearInterval(preciosSuperiores);// para que abandone la rutina de lectura de precios superiores si es que la esta ejecutando
+                   ventapuchito=true; // relacionado a la habilitacion de nueva orden de compra si hay venta remanente
 				           console.log("orden de compra !");
                    precioMaximo = foundOrder[0].price; // cada vez que hace una compra actualiza el precio maximo a ese valor 
 				           cantidadCompras += 1;
@@ -709,7 +716,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
 
                 console.log("INTENTO CON COINGEKO");        
                 cotizacion = await precioCoinGecko(condicionesIniciales.base);
-                console.log("precio de mercado actual desde stoploss: ", cotizacion);
+                console.log("precio de mercado actual desde coingecko: ", cotizacion);
             }
             console.log("CANTIDAD DE PEDIDOS DE PRECIO AL MERCADO: ", cantidadPedidoPrecio++);
             precioMercado = cotizacion;
@@ -717,7 +724,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
             console.log("PRECIO MAXIMO DETECTADO: ", precioMaximo);
             console.log("REVISAMOS PRECIOS SUPERIORES, precio de mercado atual: ", precioMercado);
 
-                if(precioMercado < limiteBajo){ //salgo de stoploss, cotizacion supero un limite en donde deveria haberse ejecutado la venta de la ultima compra
+                if(precioMercado < limiteBajo){ //salgo de atentoPreciosSuperiores, cotizacion supero un limite en donde deveria haberse ejecutado la venta de la ultima compra
                   vueltaRutinaExterna = true;
                   limiteInferior = true;
                   inicioTrading(condicionesIniciales, usuario);
@@ -733,6 +740,8 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
               //  clearInterval(bucleInicial); //suspendo las actividades en el bucle inicial para evitar conflictos
                 stopLossPrice *= (1+ condicionesIniciales.spread);
                 console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice);
+
+
                 var menorValor = 1000000;
                 var indice = 0;
                 for (var i = 0; i < openOrders.length; i++) {
@@ -755,7 +764,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                   try{
                       var nuevaOrdenCompra = await binanceClient.createLimitBuyOrder(datoMercado, monto, precioReferencia);
                               console.log("SE REALIZO UN ARDEN DE COMPRA POR SUPERAR EL NIVEL DE 1% DE LA REFERANCIA :", precioReferencia);
-                              await actualizoArrayCompras("agrego", precioReferencia); 
+                              await actualizoOrdenesCompra("agrego", precioReferencia); 
                               console.log("SE ACTUALIZO EL ARRAY DE ONDENES DE COMPRA CON :", precioReferencia);   
                                 }catch(err){
                                   console.log("no se puedo realizar la operacion ");
@@ -776,6 +785,47 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
 		},priceAdviceCheck);	
 // inicioTrading(condicionesIniciales);//reinicio el proceso de trading que cancele para ralizar todas las operaciones
 
+}
+
+//.........ELEVO COMPRA UN NIVEL...........................................
+async function elevoNivelCompra(market, nuevoPrecio, usuario){
+      const binanceClient = cliente(usuario);
+
+                        const monto =  (condicionesIniciales.ammountOperation / nuevoPrecio-0.00001).toFixed(5);
+
+                var menorValor = 1000000;
+                var indice = 0;
+                for (var i = 0; i < openOrders.length; i++) {
+                    if(openOrders[i].price < menorValor ) {
+                       menorValor = openOrders[i].price;
+                       indice = i;
+                        }
+                   }
+                console.log("BUSCAMOS LA MENOR ORDEN DE COMPRA PARA ELIMINAR ! y encontramos: ", menorValor);
+                  try{
+                     var ordenCancelada = await binanceClient.cancel_order(openOrders[indice].id, openOrders[indice].symbol); //para que cancele el menor precio de compra  
+                     console.log ("se realizo una orden de CANCELAR de la siguiente orden de compra inferior: ", ordenCancelada);
+                     await actualizoOrdenesCompra("elimino", menorValor);
+                     console.log ("SE ELIMINO ESE MENOR VALOR DEL ARRAY DE ORDENES DE COMPRA");
+                     }catch(err){
+                          console.log ("no se pudo realizar la cancelacion de orden de compra inferior ", err.message);
+                     } 
+
+          //....  coloco nueva orden de compra en nivel de referencia pasada....................           
+                  try{
+                      var nuevaOrdenCompra = await binanceClient.createLimitBuyOrder(market, monto, nuevoPrecio);
+                              console.log("SE REALIZO UN ARDEN DE COMPRA POR SUPERAR EL NIVEL DE 1% DE LA REFERANCIA :", nuevoPrecio);
+                              await actualizoOrdenesCompra("agrego", nuevoPrecio); 
+                              console.log("SE ACTUALIZO EL ARRAY DE ONDENES DE COMPRA CON :", nuevoPrecio);   
+                                }catch(err){
+                                  console.log("no se puedo realizar la operacion ");
+                                  console.log("motivo: ", err);
+                                }
+          //... actualizo precio de referencia...........
+                precioReferencia =  nuevoPrecio;    
+                await equalOrders(market, usuario);    // igualo ordenes abiertas con ordenes fijas
+
+              console.log("SE ACTUALIZO EL PRECIO DE REFERENCIA A : ", precioReferencia);
 }
 
 //...................................................................................................................................
@@ -867,65 +917,7 @@ return existe;
 
 
 //.........................................................................
-async function vigilaPreciosSuperiores(referencia, condicionesIniciales, mercadoActual){
-      const market = `${condicionesIniciales.base}/${condicionesIniciales.cotizador}`;     
 
-      const monto =  (condicionesIniciales.ammountOperation / nuevoPrecio -0.00001).toFixed(5);
-
-      var nuevaOrden = false;
-
-      var actualizoSL = false;
-
-                try{
-
-                     if (!actualizoSL) {
-                      if (mercadoActual > nuevoPrecio){
-                                   console.log(`el precio supero el ${condicionesIniciales.spread*100} % del precio de referencia, deberia actualizar stoploss, 
-                                   y borrar la orden de compra mas baja `);                       
-                                   nuevaOrden = true;// borra compra menor y actualiza stoploss level
-                                   actualizoSL = true;
-                                 }
-                     }else  nuevaOrden = false;
-
-                        if (mercadoActual > nuevoNivel) {
-                                try{
-                                  var nuevaOrdenCompra = await binanceClient.createLimitBuyOrder(market, monto, nuevoPrecio);
-                                            console.log("SE REALIZO UN ARDEN DE COMPRA POR SUPERAR EL NIVEL DE 0.075% DE LA REFERANCIA :", nuevoPrecio);
-                                     await actualizoArrayCompras("agrego", nuevoPrecio);     
-                                        //   actualizoOrdenesCompra("agrego", nuevoPrecio); 
-                                 //  fixedOrders.push(nuevaOrdenCompra);  //para manetener iguales las ordenes fijas con las abiertas y no se detencte al comienzo    
-
-                                   await equalOrders(market);    // igualo ordenes abiertas con ordenes fijas
-                                }catch(err){
-                                  console.log("no se puedo realizar la operacion ");
-                                  console.log("motivo: ", err);
-                                }
-                               clearInterval(vigilaPrecios);
-                           }
-
-                }catch(e){
-                        console.log (e)
-                        console.log (e.constructor.name)
-                        console.log (e.message)
-                        if (e instanceof ccxt.RequestTimeout) {    
-                            // do nothing and retry upon your next iteration
-                            console.log("error por motivo 1");
-                        } else if (e instanceof ccxt.ExchangeNotAvailable) {
-                            console.log("error por motivo 2");
-                            // do nothing and retry upon your next iteration
-                        } else if (e instanceof ccxt.ExchangeError) {
-                            console.log("error por motivo 3");
-                            // stop the execution, or add your handling
-                            // according to the needs of your application
-                            process.exit ();            
-                        }
-                        await binanceClient.sleep (binanceClient.rateLimit); // add a delay before retrying            
-                  }
-
-      console.log("REVISANDO PRECIOS SUPERIORES, intevalos a : ", intervaloChequeo);
-
-      return nuevaOrden;
-}
 
 //... ESTAS DOS FUNCIONES LO QUE BUSCAN ES QUE NO SE SUPERPONGAN DOS ORDENES DE COMPRA.....
 var listadoOrdenesCompra = [];
