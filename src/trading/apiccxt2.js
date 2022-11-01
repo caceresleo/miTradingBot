@@ -482,7 +482,7 @@ function anularOperaciones(){
   clearInterval(bucleInicial);
   clearInterval(preciosSuperiores);
   clearInterval(inicioStop);
-
+ for (var i = 0; i < listadoOrdenesCompra.length; i++) listadoOrdenesCompra.pop();//vaciar ordenes de compra 
 }
 
 //....ACTUALIZAR LOS VALORES A MOSTRAR EN INICIO..........................
