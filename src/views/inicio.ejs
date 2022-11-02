@@ -125,16 +125,7 @@ ctx.stroke();
     txtprecios.fillStyle = "black";
     txtprecios.fillText(precioApertura, 85, posicionY(precioApertura, precioMaximo,precioMinimo,alto));  
 
-// Eje precio Inicio de operaciones
-ctx.beginPath();
-ctx.moveTo(80,posicionY(precioInicio, precioMaximo,precioMinimo,alto));
-ctx.lineTo(80,y_base);
-ctx.strokeStyle = "gray";
-ctx.lineWidth=5;
-ctx.stroke(); 
-    txtprecios.font = "bold 12px Arial";
-    txtprecios.fillStyle = "black";
-    txtprecios.fillText(precioInicio, 85, posicionY(precioInicio, precioMaximo,precioMinimo,alto));  
+ 
 
 // Eje precio Minimo
 ctx.beginPath();
@@ -154,6 +145,18 @@ ctx.lineTo(ancho*0.2,posicionY(stopLoss, precioMaximo,precioMinimo,alto));  //or
 ctx.strokeStyle = "red";
 ctx.lineWidth=3;
 ctx.stroke(); 
+
+
+// Eje precio Inicio de operaciones
+ctx.beginPath();
+ctx.moveTo(ancho,posicionY(precioInicio, precioMaximo,precioMinimo,alto)); //punto final
+ctx.lineTo(ancho*0.2,posicionY(precioInicio, precioMaximo,precioMinimo,alto));  //origen
+ctx.strokeStyle = "gray";
+ctx.lineWidth=3;
+ctx.stroke(); 
+txtprecios.font = "bold 12px Arial";
+txtprecios.fillStyle = "black";
+txtprecios.fillText(`Inicial: ${precioInicio}`, 200, posicionY(precioInicio, precioMaximo,precioMinimo,alto)-10);     
 
 
 // punto indicador del precio Actual

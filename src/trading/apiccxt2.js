@@ -745,7 +745,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                 var menorValor = 1000000;
                 var indice = 0;
 
-/*  esta parte elimina la orden de menor valor, tal vez no sea necesario
+             //  busca menor valor, se supone que este valor es de una compra
                 for (var i = 0; i < openOrders.length; i++) {
                     if(openOrders[i].price < menorValor ) {
                        menorValor = openOrders[i].price;
@@ -753,6 +753,12 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                         }
                    }
                 console.log("BUSCAMOS LA MENOR ORDEN DE COMPRA PARA ELIMINAR ! y encontramos: ", menorValor);
+
+            // si se pisa con stoploss debemos eliminar esta orden de compra
+            
+            if (parseInt(stopLossPrice) == parseInt(menorValor) || 
+              parseInt(stopLossPrice) === parseInt(menorValor+1) || 
+              parseInt(stopLossPrice) === parseInt(menorValor-1) ) {   
                   try{
                      var ordenCancelada = await binanceClient.cancel_order(openOrders[indice].id, openOrders[indice].symbol); //para que cancele el menor precio de compra  
                      console.log ("se realizo una orden de CANCELAR de la siguiente orden de compra inferior: ", ordenCancelada);
@@ -761,7 +767,12 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                      }catch(err){
                           console.log ("no se pudo realizar la cancelacion de orden de compra inferior ", err.message);
                      } 
-                     */
+
+                }else{
+                 console.log("NO ELIMINO ESTA ORDEN DE COMPRA INFERIOR PORQUE ESTA ALEJADA DEL VALOR DE STOPLOSS ");
+
+                }     
+                     
 
           //....  coloco nueva orden de compra en nivel de referencia pasada....................           
                   try{
