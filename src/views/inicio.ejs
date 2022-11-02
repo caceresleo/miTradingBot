@@ -29,7 +29,7 @@
 <br>
 
 <section id="cajalienzo">
-    <canvas id="lienzo" width= "1000px" height="600px" style="border: 1px solid #00000">
+    <canvas id="lienzo" width= "600px" height="500px" style="border: 1px solid #00000">
         Su navegador no soporta el elemento Canvas para ver el gráfico
     </canvas>
 </section>
@@ -65,6 +65,7 @@ lo que contiene valores... Object { listaCompras: [], listaVentas: [], precioAct
     var precioMinimo= parseInt( valores.precioMinimo);
     var precioMaximo= parseInt( valores.precioMaximo);
     var precioApertura= parseInt( valores.precioApertura);
+    var precioInicio= parseInt( valores.precioInicio);    
     var stopLoss= parseInt( valores.stoploss);
     var listaCompras= valores.listaCompras;
     var listaVentas= valores.listaVentas;  
@@ -123,6 +124,17 @@ ctx.stroke();
     txtprecios.font = "bold 12px Arial";
     txtprecios.fillStyle = "black";
     txtprecios.fillText(precioApertura, 85, posicionY(precioApertura, precioMaximo,precioMinimo,alto));  
+
+// Eje precio Inicio de operaciones
+ctx.beginPath();
+ctx.moveTo(80,posicionY(precioInicio, precioMaximo,precioMinimo,alto));
+ctx.lineTo(80,y_base);
+ctx.strokeStyle = "gray";
+ctx.lineWidth=5;
+ctx.stroke(); 
+    txtprecios.font = "bold 12px Arial";
+    txtprecios.fillStyle = "black";
+    txtprecios.fillText(precioInicio, 85, posicionY(precioInicio, precioMaximo,precioMinimo,alto));  
 
 // Eje precio Minimo
 ctx.beginPath();

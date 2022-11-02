@@ -744,6 +744,8 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
 
                 var menorValor = 1000000;
                 var indice = 0;
+
+/*  esta parte elimina la orden de menor valor, tal vez no sea necesario
                 for (var i = 0; i < openOrders.length; i++) {
                     if(openOrders[i].price < menorValor ) {
                        menorValor = openOrders[i].price;
@@ -759,6 +761,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                      }catch(err){
                           console.log ("no se pudo realizar la cancelacion de orden de compra inferior ", err.message);
                      } 
+                     */
 
           //....  coloco nueva orden de compra en nivel de referencia pasada....................           
                   try{
