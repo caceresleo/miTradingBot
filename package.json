@@ -18,6 +18,7 @@
     "ccxt": "^1.93.14",
     "coingecko-api": "^1.0.10",
     "connect-flash": "^0.1.1",
+    "cookie-session": "^2.0.0",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.2",
     "ejs-mate": "^4.0.0",

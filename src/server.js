@@ -2,7 +2,8 @@ const express = require('express');
 const path = require('path');
 const engine = require('ejs-mate');
 const flash = require('connect-flash');
-const session = require('express-session');
+//const session = require('express-session');
+const session = require('cookie-session');
 const passport = require('passport');
 const morgan = require('morgan');
 const rutasTrading = require("./trading/routes");
@@ -37,7 +38,10 @@ app.use(express.urlencoded({extended: false}));
 app.use(session({
   secret: 'mysecretsession',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie:{
+   secure: true 
+    }
 }));
 app.use(flash());  //flash y passport hacen uso de las session, por lo que deben ir despues
 app.use(passport.initialize());
