@@ -452,10 +452,11 @@ bucleInicial = setInterval(async()=>{
                 console.log("---------------------------------------PRECIO CON COINGEKO: ", cotizacion);  
                 if (precioMaximo < cotizacion) precioMaximo = cotizacion; 
                 console.log("PRECIO MAXIMO DETECTADO: ", precioMaximo); 
+                console.log("monto de la ultima venta ejecutada: ", ultimaVenta); 
+
    // si la cotizacion es menor un numero kte de veces del valor maximo, me fijo si no existen ordenes de venta. 
    // si no existen ordenes de venta, entonces vendo lo que tengo en billetera al precio de mercado.
-            if(ultimaVenta != 0  &&  (ultimaVenta*1.01) < precioMaximo){  // tiene que haberse hecho una venta y ademas el precio de la venta tiene qeu ser menor al precio maximo
-                              console.log("monto de la ultima venta ejecutada: ", ultimaVenta); 
+            if(ultimaVenta != 0  &&  (ultimaVenta*(1+ condicionesIniciales.spread + condicionesIniciales.spread/2)) < precioMaximo){  // tiene que haberse hecho una venta y ademas el precio de la venta tiene qeu ser menor al precio maximo
 
               var coeficiente = precioMaximo - (precioMaximo-ultimaVenta)/3;
                  console.log("LA VENTA DEL REMANENTE SE HARIA CUANDO BAJE EL VALOR DE : ", coeficiente); 
@@ -708,6 +709,7 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
             try{
                       console.log("SE ESTA HACIENDO RUTINA DE PRECIOS SUPERIORES");
                       console.log("SE HARA ESTA RUTINA HASTA EL VALOR DE limitebajo: ", limiteBajo);
+                      console.log("stopLossPrice: ", stopLossPrice);
 
                       cotizoTicker = await precioActual(datoMercado, usuario);
                       cotizacion = cotizoTicker.ask;
