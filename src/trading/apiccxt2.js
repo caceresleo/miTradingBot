@@ -323,7 +323,9 @@ async function ventaRemanente(market, precio, usuario){
                             console.log("EL MONTO QUE SE SOLICITA TENIENDO EN CUENTA COMISION: ", montoVender);
                            var ordenRemanente = {};
                     try{
-                           ordenRemanente = await binanceClient.createLimitSellOrder(market, montoVender, precio);
+                         //  ordenRemanente = await binanceClient.createLimitSellOrder(market, montoVender, precio);
+                           ordenRemanente = await binanceClient.createMarketSellOrder(market, montoVender);
+                           
                         }catch(err){
                             console.log("no se puedo realizar la venta del remanente ");
                             console.log("motivo: ", err);
@@ -447,9 +449,15 @@ bucleInicial = setInterval(async()=>{
         console.log(`TASA DE FALLOS ${tasafallos} % `);
         if(tiempoCoinGecko <= 0){
              tiempoCoinGecko = 40;
+
+
+                 cotizoTicker = await precioActual(market, usuario);
+                 var cotizacion = cotizoTicker.ask;
+
+
                 var cotizacion = await precioCoinGecko(condicionesIniciales.base);  
                 precioMercado = cotizacion; 
-                console.log("---------------------------------------PRECIO CON COINGEKO: ", cotizacion);  
+                console.log("---------------------------------------PRECIO CON CCTX: ", cotizacion);  
                 if (precioMaximo < cotizacion) precioMaximo = cotizacion; 
                 console.log("PRECIO MAXIMO DETECTADO: ", precioMaximo); 
                 console.log("monto de la ultima venta ejecutada: ", ultimaVenta); 
@@ -766,7 +774,8 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
             
             if (parseInt(stopLossPrice) == parseInt(menorValor) || 
               parseInt(stopLossPrice) === parseInt(menorValor+1) || 
-              parseInt(stopLossPrice) === parseInt(menorValor-1) ) {   
+              parseInt(stopLossPrice) === parseInt(menorValor-1) || 
+              parseInt(stopLossPrice) > parseInt(menorValor)) {   
                   try{
                      var ordenCancelada = await binanceClient.cancel_order(openOrders[indice].id, openOrders[indice].symbol); //para que cancele el menor precio de compra  
                      console.log ("se realizo una orden de CANCELAR de la siguiente orden de compra inferior: ", ordenCancelada);
