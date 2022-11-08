@@ -11,6 +11,7 @@
 <br>
 <input id="valorInput" type="text" value='{"listaCompras":[<%=  valoresparciales.compras  %>],"listaVentas":[<%= valoresparciales.ventas %>],"precioActual":<%= valoresparciales.precio || 00000 %>,"precioMinimo":<%= valoresparciales.minimoPrecio || 00000 %>,"precioMaximo": <%= valoresparciales.maximoPrecio  || 00000 %>,"precioApertura":<%= valoresparciales.aperturaPrecio || 00000 %>,"stoploss":<%= valoresparciales.SL || 00000 %>,"precioInicio":<%= valoresparciales.precioInicio || 00000 %>}'>
 
+<!--
 <p>compras en espera: <%= valoresparciales.compras  %>  </p>
 <br>
 <p>ventas en espera: <%= valoresparciales.ventas  %></p>
@@ -27,7 +28,7 @@
 <br>
 <p>Valor de Precio de Inicio de operaciones: <%= valoresparciales.precioInicio  %> </p>
 <br>
-
+-->
 <section id="cajalienzo">
     <canvas id="lienzo" width= "600px" height="500px" style="border: 1px solid #00000">
         Su navegador no soporta el elemento Canvas para ver el gráfico
@@ -163,6 +164,9 @@ txtprecios.fillText(`Inicial: ${precioInicio}`, 200, posicionY(precioInicio, pre
 ctx.beginPath();
 ctx.arc(ancho*0.3,posicionY(precioActual, precioMaximo,precioMinimo,alto),4,0,2*Math.PI);
 ctx.stroke();
+ctx.strokeStyle = "black";
+ctx.lineWidth=3;
+ctx.stroke(); 
 
 for(let variable of listaCompras){
 
@@ -183,11 +187,11 @@ for(let variable of listaVentas){
         ctx.beginPath();
         ctx.moveTo(ancho,posicionY(variable, precioMaximo,precioMinimo,alto)); //punto final
         ctx.lineTo(ancho*0.2,posicionY(variable, precioMaximo,precioMinimo,alto));  //origen
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = "green";
         ctx.lineWidth=3;
         ctx.stroke(); 
         txtprecios.font = "bold 12px Arial";
-        txtprecios.fillStyle = "red";
+        txtprecios.fillStyle = "green";
         txtprecios.fillText(`Venta: ${variable}`, 200, posicionY(variable, precioMaximo,precioMinimo,alto)-10);         
 }
 

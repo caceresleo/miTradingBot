@@ -462,25 +462,31 @@ bucleInicial = setInterval(async()=>{
                  console.log("LA VENTA DEL REMANENTE SE HARIA CUANDO BAJE EL VALOR DE : ", coeficiente); 
 
               var cantidadOrdVent = 0;
-                  if(cotizacion < coeficiente) {
+
+              if(montoRemanente > 0){ //me fijo si hay un monto remanente o si se vendio
+                                if(cotizacion < coeficiente) {
                     openOrders.forEach((arr, index)=> {if(arr.side === 'sell') cantidadOrdVent++});
                     if(!cantidadOrdVent && ventapuchito){
+                      precioMaximo =0 ; //RESETEO EL VALOR DE PRECIO MAXIMO
                       //realizar la venta de lo que tenga en billetera al precio de mercado
-                      console.log("SE REALIZO LA VENTA DE MI REMANETE !!! , AL PRECIO DE ",cotizacion );
                       await ventaRemanente(market, cotizacion, usuario);
+                      console.log("SE REALIZO LA VENTA DE MI REMANETE !!! , AL PRECIO DE ",cotizacion );
+                      montoRemanente=0;
                       ventapuchito=false;
                       cantidadOrdVent=0;
                       listadoOrdenesCompra.shift(); // borra el primer elemento del array que corresponde al remanente.
-                stopLossPrice *= (1+ condicionesIniciales.spread);
-                console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice); //elevo stop loss un nivel mas
+                      stopLossPrice *= (1+ condicionesIniciales.spread);
+                      console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice); //elevo stop loss un nivel mas
 
-                 await elevoNivelCompra(market, precioReferencia, usuario);// actualizo nivel de compra a un nivel superior
+                       await elevoNivelCompra(market, precioReferencia, usuario);// actualizo nivel de compra a un nivel superior
 
                       }
                     }
-                  }
+              } 
+
+         }
      
-           }
+        }
       }, 1500 );
 
 }
@@ -1004,6 +1010,9 @@ async function procesoCancelar(market, usuario){
 
 
                   var task = await Task.findOne({'ventaId': idOrdenesVenta[i]});
+
+                  console.log(`el contenido de task que se encontro con la orden de venta  ${idOrdenesVenta[i]}, es el siguiente : ${task}`);
+
 
                    // task.fechaVenta = ordenCancelar[i].datetime;
                     task.precioVenta = ordenVentaTotal.price;
