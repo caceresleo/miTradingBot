@@ -249,8 +249,8 @@ async function balanceBD (usuario) {
 //  const tasks = await Task.findOne({_id: objetoParticular}); //deberia tener una lista con los trading de un usuario en particular
   var task = "";
   var sumatoria = 0.00;
-  for (var i = 0; i < ordenesBD.length; i++) {
-    task =  await Task.findOne({'compraId': ordenesBD[i]});
+  for (var i = 0; i < ordenesBD.length; i++) { //ordenesBD  es un array con lar ordenes de compra realizadas.
+    task =  await Task.findOne({'compraId': ordenesBD[i].id});
     console.log("suma el siguiente valor: ",parseFloat(task.margen));
     sumatoria += parseFloat(task.margen);
   }
