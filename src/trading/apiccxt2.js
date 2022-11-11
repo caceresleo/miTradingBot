@@ -457,7 +457,7 @@ bucleInicial = setInterval(async()=>{
                  var cotizacion = cotizoTicker.ask;
 
 
-                var cotizacion = await precioCoinGecko(condicionesIniciales.base);  
+           //     var cotizacion = await precioCoinGecko(condicionesIniciales.base);  
                 precioMercado = cotizacion; 
                 console.log("---------------------------------------PRECIO CON CCTX: ", cotizacion);  
                 if (precioMaximo < cotizacion) precioMaximo = cotizacion; 
@@ -466,7 +466,7 @@ bucleInicial = setInterval(async()=>{
 
    // si la cotizacion es menor un numero kte de veces del valor maximo, me fijo si no existen ordenes de venta. 
    // si no existen ordenes de venta, entonces vendo lo que tengo en billetera al precio de mercado.
-            if(ultimaVenta != 0  &&  (ultimaVenta*(1+ condicionesIniciales.spread + condicionesIniciales.spread/2)) < precioMaximo){  // tiene que haberse hecho una venta y ademas el precio de la venta tiene qeu ser menor al precio maximo
+            if(ultimaVenta != 0  &&  (ultimaVenta*(1+ condicionesIniciales.spread + condicionesIniciales.spread/3)) < precioMaximo){  // tiene que haberse hecho una venta y ademas el precio de la venta tiene qeu ser menor al precio maximo
 
               var coeficiente = precioMaximo - (precioMaximo-ultimaVenta)/3;
                  console.log("LA VENTA DEL REMANENTE SE HARIA CUANDO BAJE EL VALOR DE : ", coeficiente); 
@@ -773,11 +773,15 @@ async function atentoPreciosSuperiores(datoMercado, ultimoPrecio, usuario){
                 console.log("BUSCAMOS LA MENOR ORDEN DE COMPRA PARA ELIMINAR ! y encontramos: ", menorValor);
 
             // si se pisa con stoploss debemos eliminar esta orden de compra
-            
-            if (parseInt(stopLossPrice) == parseInt(menorValor) || 
+
+                /*
+              parseInt(stopLossPrice) == parseInt(menorValor) || 
               parseInt(stopLossPrice) === parseInt(menorValor+1) || 
-              parseInt(stopLossPrice) === parseInt(menorValor-1) || 
-              parseInt(stopLossPrice) > parseInt(menorValor)) {   
+              parseInt(stopLossPrice) === parseInt(menorValor-1) ||
+                */ 
+            
+            // si menorValor esta por debajo del valor de stoploss + el porcentaje de spread
+            if ((1+condicionesIniciales.spread*deltaSuperior)*stopLossPrice > parseInt(menorValor)) {   
                   try{
                      var ordenCancelada = await binanceClient.cancel_order(openOrders[indice].id, openOrders[indice].symbol); //para que cancele el menor precio de compra  
                      console.log ("se realizo una orden de CANCELAR de la siguiente orden de compra inferior: ", ordenCancelada);
