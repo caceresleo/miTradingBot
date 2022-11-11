@@ -889,14 +889,12 @@ async function ejecutaStopLoss(datoMercado, ultimoPrecio, usuario){
 
                 if (cotizacion < stopLossPrice) {
                    //  clearInterval(bucleInicial);  //salto inconidcional del bulce de trading
-                  console.log("CONTENIDO DEL LISTADO DE ID DE ORDENES DE COMPRA QUE CONTABILIZA: "); 
-                  for (var i = 0; i < ordenesBD.length; i++){
-                     console.log(`${i+1} - ${ordenesBD[i]}`);  
-                  }
+
+                     await ventaRemanente(datoMercado, cotizacion, usuario);
+                  console.log("TERMINO EL PROCESO DE VENTA REMANENTE ");                   
                      await procesoCancelar(datoMercado, usuario);
                   console.log("TERMINO EL PROCESO DE CANCELAR ORDEN "); 
-                     await ventaRemanente(datoMercado, cotizacion, usuario);
-                  console.log("TERMINO EL PROCESO DE VENTA REMANENTE "); 
+
 
                      console.log("se salio del bucle general por STOP LOSS   :-( ");  
                       var montoTotal = await balanceBD(usuario);
