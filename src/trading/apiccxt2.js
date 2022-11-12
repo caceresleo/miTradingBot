@@ -201,7 +201,7 @@ async function ejecutarOrden(variables, ticker, base, cotizador, usuario){
     const monto =  (config.ammountOperation / precioNuevaCompra  - 0.00001).toFixed(5);
 
                             console.log(`valor que llega de ammountOperation ${config.ammountOperation} : y de la compra ${precioNuevaCompra}`);
-
+    
     if(config.order === "Compra"){  
               for(var i=1; i <= deltaPrecio; i++){
                           console.log(`monto al que se va a hacer la compra ${i} : ${monto}`);
@@ -547,6 +547,8 @@ return valoresActuales;
 }
 //......................................................................... 
 
+var ultimasOrdenes = [];
+
 async function ejecutoAccion(foundOrder, usuario){
 
    const binanceClient = cliente(usuario);
@@ -562,6 +564,8 @@ async function ejecutoAccion(foundOrder, usuario){
 
 		   if(!precioReferencia) precioReferencia= precioSuperior;		
 
+
+       ultimasOrdenes.push(foundOrder[0].side); // voy acumulando las ultimas ordenes para saber cuales fueron las ultimas
 
            if (foundOrder[0].side === 'buy') {  //ORDEN QUE SE EJECUTÓ,en este caso se ejecuto una orden de compra. 
                      clearInterval(preciosSuperiores);// para que abandone la rutina de lectura de precios superiores si es que la esta ejecutando
@@ -617,14 +621,21 @@ async function ejecutoAccion(foundOrder, usuario){
                              }     
   //..................................................................................
 
-                         console.log(`--------------se haria una nueva compra al precio de ${precioInferior} si no esta en array de compras`);
-                         
+                         console.log(`-----se haria una nueva compra al precio de ${precioInferior} si no esta en array de compras,
+                          o no se hicieron dos compras consecutivas`);
+
+                         var comprasConsecutivas= false; 
+                         var muestraUltimasOrdenes=[].concat(ultimasOrdenes);
+
+                         if (muestraUltimasOrdenes.pop() === 'buy') if (muestraUltimasOrdenes.pop() === 'buy'){
+                            comprasConsecutivas=true;
+                            console.log("LAS DOS ULTIMAS ORDENES FUERON DE COMPRA !! , NO SE HARIA OTRA COPRA NUEVA"); 
+                         } 
+
                          var stop=false;
-                         if(parseInt(precioInferior) == parseInt(stopLossPrice)  || 
-                          parseInt(precioInferior) == parseInt(stopLossPrice+1) || 
-                          parseInt(precioInferior) == parseInt(stopLossPrice-1)){
-                                 console.log("NO SE HACE LA ORDEN DE COMPRA PORQUE EN ESE NIVEL TENEMOS AL STOPLOSS"); 
-                                  stop =true;
+                         if((1+condicionesIniciales.spread*deltaSuperior)*stopLossPrice > precioInferior && !comprasConsecutivas){
+                                 console.log("NO SE HACE LA ORDEN DE COMPRA PORQUE EN ESE NIVEL TENEMOS AL STOPLOSS CERCA"); 
+                                  stop =true; //CON ESTO EJECUTA LA RUTINA DE STOPLOSS
                           }else{
                             if (!exiteOrdenCompra(precioInferior)) { //... para que no haga orden de compra si ya existe una en ese monto
                                  console.log("NO EXISTE ESA ORDEN DE COMPRA, LA CREAMOS A CONTINUACION"); 
