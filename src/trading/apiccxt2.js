@@ -453,11 +453,11 @@ bucleInicial = setInterval(async()=>{
              tiempoCoinGecko = 40;
 
 
-                 cotizoTicker = await precioActual(market, usuario);
-                 var cotizacion = cotizoTicker.ask;
+             //    cotizoTicker = await precioActual(market, usuario);
+             //    var cotizacion = cotizoTicker.ask;
 
 
-           //     var cotizacion = await precioCoinGecko(condicionesIniciales.base);  
+                var cotizacion = await precioCoinGecko(condicionesIniciales.base);  
                 precioMercado = cotizacion; 
                 console.log("---------------------------------------PRECIO CON CCTX: ", cotizacion);  
                 if (precioMaximo < cotizacion) precioMaximo = cotizacion; 
