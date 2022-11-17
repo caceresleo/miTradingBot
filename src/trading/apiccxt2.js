@@ -12,6 +12,9 @@ const path = require('path');
 
 const {sendMessage} = require('./send-sms');
 
+const coinPoloniex = require("./coinPoloniex");
+
+
 var net = require('net');
 
 function ping(direccion, puerto){
@@ -677,29 +680,36 @@ async function ejecutoAccion(foundOrder, usuario){
                //  const monto =  (condicionesIniciales.ammountOperation / precioNuevaCompra - condicionesIniciales.ammountOperation / precioNuevaCompra*(comisionOperacion)).toFixed(4);
                const monto =  (condicionesIniciales.ammountOperation / precioNuevaCompra).toFixed(4);
                console.log("la nueva compra se haria a :", precioNuevaCompra);
+//.............ELEVO STOPLOSS EN CADA VENTA Y ANALIZO SI REALIZO NUEVA COMPRA ..........................................
+               stopLossPrice *= (1+ condicionesIniciales.spread/2);
+                console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice);
 
-               let idCompra = "";
-               let ordenCompra = {};
+                if(stopLossPrice*(1+ condicionesIniciales.spread/2) < precioNuevaCompra){
 
-                try{
-                   ordenCompra = await binanceClient.createLimitBuyOrder(market, monto, precioNuevaCompra);
-                   console.log(`se realizo una orden de compra a ${precioNuevaCompra} ${condicionesIniciales.base}`);
-                   idCompra = ordenCompra.id; 
-                   console.log("id de compra: ", idCompra);
-                   //await actualizoArrayCompras("agrego", precioNuevaCompra);
-                   await   actualizoOrdenesCompra("agrego", precioNuevaCompra);
-                 //  accion='normal';
-                    }catch(err){
-                         console.log("no se puedo realizar la operacion ");
-                         console.log("motivo: ", err);
-                         }
-                try{
-                    cargaBasedatos(foundOrder[0], ordenCompra, usuario) ;  //foundOrder es la orden que se ejecuto, y ordenCompra es la orden de venta en consecuencia 
-                    console.log("cargue orden en base de datos");
-                      
-                    }catch(err){
-                     console.log("error al enviar a cargar base de datos: ", err);
-                    }
+                     let idCompra = "";
+                     let ordenCompra = {};
+
+                      try{
+                         ordenCompra = await binanceClient.createLimitBuyOrder(market, monto, precioNuevaCompra);
+                         console.log(`se realizo una orden de compra a ${precioNuevaCompra} ${condicionesIniciales.base}`);
+                         idCompra = ordenCompra.id; 
+                         console.log("id de compra: ", idCompra);
+                         //await actualizoArrayCompras("agrego", precioNuevaCompra);
+                         await   actualizoOrdenesCompra("agrego", precioNuevaCompra);
+                       //  accion='normal';
+                          }catch(err){
+                               console.log("no se puedo realizar la operacion ");
+                               console.log("motivo: ", err);
+                               }
+                      try{
+                          cargaBasedatos(foundOrder[0], ordenCompra, usuario) ;  //foundOrder es la orden que se ejecuto, y ordenCompra es la orden de venta en consecuencia 
+                          console.log("cargue orden en base de datos");
+                            
+                          }catch(err){
+                           console.log("error al enviar a cargar base de datos: ", err);
+                          }
+                } 
+ //.............................................................................................................                  
                 if (parseInt(precioReferencia) == parseInt(foundOrder[0].price)){ 
                   //atentoPreciosSuperiores(market); 
                   accion='preciossuperiores';
@@ -1228,7 +1238,9 @@ function searchOrder(ordenes1, ordenes2) {
 }
 
 
-module.exports = {anularOperaciones, valoresParciales, balancesPropios, cotizacionActual, ejecutarOrden, inicioTrading, ordenesAbiertas, cancelaOperacion, precioActual, bajarListadoGecko}
+module.exports = {anularOperaciones, valoresParciales, balancesPropios, cotizacionActual, 
+                  ejecutarOrden, inicioTrading, ordenesAbiertas, cancelaOperacion, 
+                  precioActual, bajarListadoGecko}
    
 
 
