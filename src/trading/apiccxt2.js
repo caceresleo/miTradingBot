@@ -627,6 +627,8 @@ async function ejecutoAccion(foundOrder, usuario){
                          console.log(`-----se haria una nueva compra al precio de ${precioInferior} si no esta en array de compras,
                           o no se hicieron dos compras consecutivas`);
 
+                         var yaExiste = exiteOrdenCompra(precioInferior);
+
                          var comprasConsecutivas= false; 
                          var muestraUltimasOrdenes=[].concat(ultimasOrdenes);
 
@@ -638,9 +640,9 @@ async function ejecutoAccion(foundOrder, usuario){
                          var stop=false;
                          if((1+condicionesIniciales.spread*deltaSuperior)*stopLossPrice > precioInferior && !comprasConsecutivas){
                                  console.log("NO SE HACE LA ORDEN DE COMPRA PORQUE EN ESE NIVEL TENEMOS AL STOPLOSS CERCA"); 
-                                  stop =true; //CON ESTO EJECUTA LA RUTINA DE STOPLOSS
+                                 if (!yaExiste) stop =true; //CON ESTO EJECUTA LA RUTINA DE STOPLOSS, si no hay otra orden de compra cerca
                           }else{
-                            if (!exiteOrdenCompra(precioInferior)) { //... para que no haga orden de compra si ya existe una en ese monto
+                            if (!yaExiste) { //... para que no haga orden de compra si ya existe una en ese monto
                                  console.log("NO EXISTE ESA ORDEN DE COMPRA, LA CREAMOS A CONTINUACION"); 
                                  //wallet = await binanceClient.fetchBalance();
                                  var mibilletera = await balancesPropios(usuario);
