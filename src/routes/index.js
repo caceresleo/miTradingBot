@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const passport = require('passport');
 
+
 //.... REQUERIMIENTOS PARA EL TRADINGBOT............
 const api = require('../trading/api');
 const exchange = require('../trading/apiccxt2');
@@ -25,6 +26,7 @@ let listadoGecko = [];
 
 
 router.get('/', async (req, res, next) => {
+
   var conexion = await coinsGecko.ping().seccess;
 
 if (!conexion) res.render('index');

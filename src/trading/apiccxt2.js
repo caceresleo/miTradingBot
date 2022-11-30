@@ -406,7 +406,7 @@ bucleInicial = setInterval(async()=>{
                         } 				
                if(cambioOrdenes) {
                                 await equalOrders(market, usuario); //carga los valores de  openOrders  y fixedOrders
-                                console.log("ACTUALIZACION FORZADA DE LAS ORDENES, ALGO ANDUVO MAL");
+                                console.log("ACTUALIZACION FORZADA DE LAS ORDENES");
                                 cambioOrdenes = false;  
                               }
               if(openOrders.length != fixedOrders.length) {
@@ -490,6 +490,8 @@ bucleInicial = setInterval(async()=>{
                       listadoOrdenesCompra.shift(); // borra el primer elemento del array que corresponde al remanente.
                       stopLossPrice *= (1+ condicionesIniciales.spread);
                       console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice); //elevo stop loss un nivel mas
+
+                      if(await cancelaCompraMasBaja(market, usuario)) cambioOrdenes = true;
 
                        await elevoNivelCompra(market, precioReferencia, usuario);// actualizo nivel de compra a un nivel superior
 
@@ -685,6 +687,8 @@ async function ejecutoAccion(foundOrder, usuario){
 //.............ELEVO STOPLOSS EN CADA VENTA Y ANALIZO SI REALIZO NUEVA COMPRA ..........................................
                stopLossPrice *= (1+ condicionesIniciales.spread/2);
                 console.log("ELEVO EL STOPLOSS A EL VALOR: ", stopLossPrice);
+
+                    if( await cancelaCompraMasBaja(market, usuario)) console.log("SE CANCELO ORDEN DE COMPRA MAS BAJA POR PROXIMIDAD A STOPLOSS");
 
                 if(stopLossPrice*(1+ condicionesIniciales.spread/2) < precioNuevaCompra){
 
@@ -899,7 +903,9 @@ async function ejecutaStopLoss(datoMercado, ultimoPrecio, usuario){
               console.log("SE ESTA HACIENDO RUTINA DE STOPLOSS");
               cotizoTicker = await precioActual(datoMercado, usuario);
               cotizacion = cotizoTicker.ask;
-        console.log("precio de mercado actual desde stoploss: ", cotizacion);
+              console.log("precio de mercado actual : ", cotizacion);
+              console.log("stopLossPrice: ", stopLossPrice);
+
 
     }catch(e){
         console.log("no se pudo realizar esta peticion de precio, envia el mensaje de error: ", e.message);
@@ -993,7 +999,7 @@ function exiteOrdenCompra(monto) {
   var existe = false;
   if (listadoOrdenesCompra.length) {  // que el array no este vacio
           for (var i = 0; i < listadoOrdenesCompra.length; i++) {
-            if (precioBuscar == listadoOrdenesCompra[i]  || precioBuscar == listadoOrdenesCompra[i]+1 || precioBuscar == listadoOrdenesCompra[i]-1) existe = true;  
+            if (precioBuscar == listadoOrdenesCompra[i]  || precioBuscar == listadoOrdenesCompra[i]*1.001 || precioBuscar == listadoOrdenesCompra[i]*0.999) existe = true;  
           }
        }
   return existe;     
@@ -1085,7 +1091,38 @@ async function cancelaOperacion(orderId, symbol, usuario) {
   // body...
 }
 
+async function cancelaCompraMasBaja(symbol, usuario){
 
+  //comparamos la ultima orden de compra con el nivel de stoploss, no queremos que este por debajo no proximo
+
+                var menorValor = 1000000;
+                var indice = 0;
+                for (var i = 0; i < openOrders.length; i++) {
+                    if(openOrders[i].price < menorValor ) {
+                       menorValor = openOrders[i].price;
+                       indice = i;
+                        }
+                   }
+
+            if(stopLossPrice > menorValor*1.004){ //eliminamos con un margen de 4% el precio de compra menor a stoploss
+
+             const binanceClient = cliente(usuario);
+            console.log("BUSCAMOS LA MENOR ORDEN DE COMPRA PARA ELIMINAR ! y encontramos: ", menorValor);
+                  try{
+                     var ordenCancelada = await binanceClient.cancel_order(openOrders[indice].id, openOrders[indice].symbol); //para que cancele el menor precio de compra  
+                     console.log ("se realizo una orden de CANCELAR de la siguiente orden de compra inferior: ", ordenCancelada);
+                     await actualizoOrdenesCompra("elimino", menorValor);
+                     console.log ("SE ELIMINO ESE MENOR VALOR DEL ARRAY DE ORDENES DE COMPRA");
+                     }catch(err){
+                          console.log ("no se pudo realizar la cancelacion de orden de compra inferior ", err.message);
+                     } 
+              return true;
+
+            }else return false; 
+
+}
+
+/*
 async function rutinaCancelarOperacion() {
 
                   var ordenesActuales = JSON.parse(JSON.stringify(openOrders));//copia independiente de el ojeto openOrders                  
@@ -1134,7 +1171,7 @@ async function rutinaCancelarOperacion() {
                     }
 
 }
-
+*/
 
 function searchOrderPrueba(ordenes1, ordenes2) {
    let iterator = ordenes2.values();
