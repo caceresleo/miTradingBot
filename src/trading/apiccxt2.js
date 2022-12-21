@@ -459,10 +459,25 @@ bucleInicial = setInterval(async()=>{
              //    cotizoTicker = await precioActual(market, usuario);
              //    var cotizacion = cotizoTicker.ask;
 
+        var cotizacion;     
 
-                var cotizacion = await precioCoinGecko(condicionesIniciales.base);  
+            cotizacion = await precioCoinGecko(condicionesIniciales.base);  
+            console.log("---------------------------------------PRECIO CON COINGEKO: ", cotizacion);  
+             if (!cotizacion) {
+
+                      try{
+                         cotizacion = await coinPoloniex.precioCripto(condicionesIniciales.base);
+                         console.log("---------------------------------------PRECIO CON POLONIEX: ", cotizacion);  
+                      }catch(e){
+                          console.log("no se puede leer el precio con POLONIEX por el siguiente error : ", e);  
+                      }
+
+             }
+
+
+
+
                 precioMercado = cotizacion; 
-                console.log("---------------------------------------PRECIO CON CCTX: ", cotizacion);  
                 if (precioMaximo < cotizacion) precioMaximo = cotizacion; 
                 console.log("PRECIO MAXIMO DETECTADO: ", precioMaximo); 
                 console.log("monto de la ultima venta ejecutada: ", ultimaVenta); 
@@ -477,7 +492,7 @@ bucleInicial = setInterval(async()=>{
               var cantidadOrdVent = 0;
 
               if(montoRemanente > 0){ //me fijo si hay un monto remanente o si se vendio
-                                if(cotizacion < coeficiente) {
+                                if(cotizacion < coeficiente && cotizacion > 0) {
                     openOrders.forEach((arr, index)=> {if(arr.side === 'sell') cantidadOrdVent++});
                     if(!cantidadOrdVent && ventapuchito){
                       precioMaximo =0 ; //RESETEO EL VALOR DE PRECIO MAXIMO

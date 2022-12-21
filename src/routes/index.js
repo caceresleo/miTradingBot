@@ -38,9 +38,13 @@ if (!conexion) res.render('index');
 
 router.get('/inicio',isAuthenticated, async (req, res, next) => {
 
+  /*
+
          var coinsPolo = await coinPoloniex.precioCripto(base);
 
          console.log("precio que devuelve poloniex :", coinsPolo);
+
+         */
      //  var objetoParticular = req.user;
 
     //   console.log("usuario que llega: ", objetoParticular)
