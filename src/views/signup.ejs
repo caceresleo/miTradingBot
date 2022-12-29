@@ -1,0 +1,70 @@
+<%- layout('layouts/main')%>
+
+<!--
+<form action="/signup" method="POST">
+  <input type="email" name="email" placeholder="Email">
+  <input type="password" name="password" placeholder="Password">
+  <button type="submit">
+    SignUp
+  </button>
+</form>
+
+
+       <div class="mb-3 text-start">
+        <label for="phonesignup" class="form-label ">Telefono</label>
+        <input type="text" name="telefono" class="form-control" id="phonesignup" placeholder="+54 + (codigo area sin 0) + (n° celular sin 15)" >
+      </div> 
+
+       <div class="mb-3 text-start">
+        <label for="keycrypt" class="form-label ">KEY</label>
+        <input type="text" name="key" class="form-control" id="keycrypt" placeholder="(combinación de 34 caracteres)" >
+      </div> 
+
+       <div class="mb-3 text-start">
+        <label for="secretcrypt" class="form-label ">SECRET</label>
+        <input type="text" name="secret" class="form-control" id="secretcrypt" placeholder="(combinación de 34 caracteres)" >
+      </div> 
+
+
+-->
+
+<div class="container col-md-4 col-sm-12 text-center" id="signin_block">
+    <h2>Datos de Registro</h2>
+    <form action="/signup" method="POST" >
+
+      <div class="mb-3 text-start">
+        <label for="aliassignup" class="form-label ">Nombre/Alias</label>
+        <input type="text" name="alias" class="form-control" id="aliassignup" placeholder="" >
+      </div>
+
+      <div class="mb-3 text-start">
+        <label for="emailsignupup" class="form-label ">Email</label>
+        <input type="email" name="email" class="form-control" id="emailsignupup" placeholder="Ingrese se email" aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">Sus datos son privados y no se comparten con nadie mas.</div>
+      </div>
+      <div class="mb-3 text-start">
+        <label for="signuppassword" class="form-label ">Contraseña</label>
+        <input type="password" name="password" class="form-control" id="signuppassword" >
+      </div>
+      <div class="mb-3 text-start">
+        <label for="signuppasswordconf" class="form-label ">Confirmar Contraseña</label>
+        <input type="password" name="password2" class="form-control" id="signuppasswordconf" >
+      </div>      
+      <div class="mb-3 text-start">
+        <label for="phonesignup" class="form-label ">Telefono</label>
+        <input type="text" name="telefono" class="form-control" id="phonesignup" placeholder="+54 + (codigo area sin 0) + (n° celular sin 15)" >
+      </div> 
+
+      <div class="mb-3 text-start">
+        <label for="key" class="form-label ">KEY</label>
+        <input type="text" name="key" class="form-control" id="key" placeholder="colocar el codigo de 34 caracteres" >
+      </div> 
+      <div class="mb-3 text-start">
+        <label for="secret" class="form-label ">SECRET</label>
+        <input type="text" name="secret" class="form-control" id="secret" placeholder="colocar el codigo de 34 caracteres" >
+      </div>     
+
+      <button type="submit" class="btn btn-primary btn-block mt-4 mb-3">Registrarse</button>
+    </form>
+
+</div> 

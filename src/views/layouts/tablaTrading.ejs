@@ -1,0 +1,72 @@
+<%- layout('layouts/main') %>
+
+<div class="container col-md-12 table-responsive-sm">
+
+		<table class="table table-hover  mt-4  mb-3">
+			<thead class="bg-dark" style="color: white;" >
+				<tr>
+					<th scope="col">Nro.</th>			
+					<th scope="col">Id. COMPRA</th>
+					<th scope="col">Fecha de COMPRA</th>
+					<th scope="col">TICKER</th>
+					<th scope="col">Precio de COMPRA</th>
+					<th scope="col">Id. VENTA</th>
+					<th scope="col">Fecha de VENTA</th>
+					<th scope="col">Precio de VENTA</th>
+					<th scope="col">Margen</th>
+					<th scope="col">(%)</th>
+					<th scope="col">Modo</th>
+
+				</tr>
+				
+			</thead>
+
+			<tbody>
+
+			
+			<% for(var i=1; i<tasks.length; i++) {%>
+
+				<tr class="table-success">
+					<th scope="row"><%= tasks[i].numero %></th>
+			         <td><%= tasks[i].compraId %></td>
+			         <td><%= tasks[i].updatedAt.getUTCDate()%>/<%= tasks[i].updatedAt.getUTCMonth()%>/<%= tasks[i].updatedAt.getFullYear()%>  - 
+			         <%= tasks[i].updatedAt.getHours()%>:<%= tasks[i].updatedAt.getMinutes()%>:<%= tasks[i].updatedAt.getSeconds()%></td>
+			         <td><%= tasks[i].simbolo %></td>
+			         <td><%= tasks[i].precioCompra %> </td>
+
+					 <td><%= tasks[i].ventaId %></td>
+
+					 <% if(tasks[i].precioVenta === 0){ %>
+					         <td></td>	
+					         <td></td>
+					         <td></td>
+					         <td></td>			         
+					         <td></td>						 	
+									<% } else{ %>
+			         <td><%= tasks[i].fechaVenta.getUTCDate()%>/<%= tasks[i].fechaVenta.getUTCMonth()%>/<%= tasks[i].fechaVenta.getFullYear()%>  - 
+			         <%= tasks[i].fechaVenta.getHours()%>:<%= tasks[i].fechaVenta.getMinutes()%>:<%= tasks[i].fechaVenta.getSeconds()%></td>	
+			         <td><%= tasks[i].precioVenta %> </td>
+
+                     <td><%= parseFloat(((tasks[i].precioVenta*tasks[i].montocompra)/tasks[i].precioCompra  -  tasks[i].montocompra ).toFixed(2)) %></td>
+
+			         <td><%= parseFloat((tasks[i].precioVenta/tasks[i].precioCompra * 100  - 100).toFixed(2)) %></td>	
+
+			         <td><%= tasks[i].modo %> </td>			         
+
+									<% } %>
+
+			         <td><a href="/deleteBD/<%= tasks[i]._id %>">delete</a></td>
+
+
+	         	</tr>
+
+	         <% } %>
+			        
+
+		    </tbody>
+		</table>
+
+
+
+
+</div>

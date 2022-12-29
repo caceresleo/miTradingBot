@@ -1,0 +1,39 @@
+<%- layout('layouts/main') %>
+
+<div class="container col-md-12 mb-4 pb-4 table-responsive-sm" >
+
+			<div class="text-center mt-3">
+			<h2>MI BILLETERA</h2>
+			</div>
+			<table class="table col-sm-12 table-hover table-striped  mt-3 table-sm">
+			  <thead class="bg-success" style="color: black;" 	>
+			    <tr>
+			      <th scope="col" colspan="2">Coin</th>
+			      <th scope="col">Disponible</th>
+			      <th scope="col">Comprometido</th>
+			      <th scope="col">Total</th>
+			    </tr>
+			  </thead>
+			  <tbody class="table-group-divider">
+
+
+				         	<% for (let clave in billetera) { %>
+				         		<tr class="table-info">
+				         			<% let icono = "" %>
+				         		<%	coinslista.forEach((item) => {
+				         				if(item.symbol.toUpperCase() == clave )icono = item.image.small;
+				         			}) %>
+
+
+				         			
+				         			<td>  <img src=<%= icono %> >  </td>
+								<th scope="row"><%= clave  %></td>
+						         <td><%= billetera[clave].free %></td>
+						         <td><%= billetera[clave].used %> </td>
+						         <td><%= billetera[clave].total %></td>
+						         </tr>
+				         	<% } %>
+
+			  </tbody>
+			</table>
+</div>

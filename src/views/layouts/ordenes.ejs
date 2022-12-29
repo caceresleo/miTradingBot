@@ -1,0 +1,86 @@
+<%- layout('layouts/main') %>
+
+<div class="container col-md-12 table-responsive-sm">
+
+		<table class="table table-hover  mt-4  mb-3">
+			<thead class="bg-dark" style="color: white;">
+				<tr>
+					<th scope="col">Id</th>
+					<th scope="col">Fecha</th>
+					<th scope="col">TICKER</th>
+					<th scope="col">Precio</th>
+					<th scope="col">Tipo</th>
+					<th scope="col">Modo</th>
+				</tr>
+				
+			</thead>
+
+			<tbody>
+
+				
+
+					<% for(var i=0; i<ordenesAbiertas.length; i++) {%>
+
+						<tr class="table-info">
+							<th scope="row"><%= ordenesAbiertas[i].id %></th>
+					         <% let  horario =  new Date(ordenesAbiertas[i].datetime) %>
+
+					         <td><%= horario.getUTCDate()%>/<%= horario.getUTCMonth()%>/<%= horario.getFullYear()%>  - 
+					         <%= horario.getHours()%>:<%= horario.getMinutes()%>:<%= horario.getSeconds()%></td>
+					         <td><%= ordenesAbiertas[i].symbol %></td>
+
+					         <td><%= ordenesAbiertas[i].price %></td>
+					         <td><%= ordenesAbiertas[i].side %></td>
+					         <td><%= ordenesAbiertas[i].type %></td>
+
+					         <td><a href="/delete/<%= ordenesAbiertas[i].id %>" status=>delete</a></td>
+
+
+
+
+
+			         	</tr>
+
+			         <% } %>
+
+			         
+
+		    </tbody>
+		</table>
+</div>
+<div class="container col-md-12 offset-md-5">
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-danger mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  ¡ Detener mi Bot !
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">¡ Estás a punto de Detener el Bot !</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Se detiene el proceso de autotrading. 
+        <br>
+        <br>
+        Si acepás detener el Bot. Luego podrás anular inividualmente cada una de las órdenes que quedan pendientes.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <a href="/anulartodo">
+        <button type="button" class="btn btn-primary">Detener Bot</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+</div>
+

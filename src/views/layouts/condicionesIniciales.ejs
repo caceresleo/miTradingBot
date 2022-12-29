@@ -1,0 +1,253 @@
+
+<%- layout('layouts/main') %>
+
+<div class="container col-md-12 " style="color: black;">
+
+			<div class="row  mt-4 ">
+					    <h2>Condiciones iniciales para comenzar las operaciones de trading:</h2>
+
+
+
+			<div class="col-sm-12 col-md-8 mt-2">
+				<img src="./icons/precios.jpg" class="img-fluid img-thumbnail" alt="Responsive image">
+			</div>
+			<div class=" col-sm-12 col-md-4 mt-4" >
+						<form action="/condicionesIni"  method="post">
+					  <fieldset>
+
+					    <div class="form-group">
+							  <label class="form-label mt-4">Monto en Billetera de Inicio: </label>
+							    <div class="input-group mb-3">
+							      <span class="input-group-text">USDT</span>
+							      <input type="number" class="form-control" name="montoInicial" id="montoInicial" step=".01"  >
+							    </div>
+							    <br>
+							  <label class="form-label mt-4">Precio de Mercado Inicial: </label>
+							    <div class="input-group mb-3">
+							      <span class="input-group-text">USDT</span>
+							      <input type="number" class="form-control" name="precioInicial" id="precioInicial" step=".01"  >
+							    </div>
+					    </div>
+
+
+
+
+					    <fieldset class="form-group">
+					      <legend class="mt-4">Tipo de Orden: </legend>
+					      <div class="form-check">
+					        <input class="form-check-input" type="radio" name="orden" id="compra" value="Compra" checked="checked">
+					        <label class="form-check-label" for="compra">
+					          Orden de COMPRA
+					        </label>
+					      </div>
+					      <div class="form-check">
+					        <input class="form-check-input" type="radio" name="orden" id="venta" value="Venta">
+					        <label class="form-check-label" for="venta">
+					          Orden de VENTA
+					        </label>
+					      </div>
+					    </fieldset>
+
+					</div>
+
+			</div>
+
+			<div class="row">
+
+			<div class=" col-md-4 ">
+
+					    <div class="form-group">
+							  <label class="form-label mt-4">Margen de Operación: </label>
+							    <div class="input-group mb-3">
+							    	<span class="input-group-text">     </span>
+							      <input type="number" class="form-control" name="margenOperacion" id="margenOperacion" size="2" step="0.1" aria-label="Amount (to the nearest dollar)">
+							      <span class="input-group-text">%</span>
+							    </div>
+					    </div>
+
+					    <div class="form-group">
+							  <label class="form-label mt-4">Monto por Operación: </label>
+							    <div class="input-group mb-3">
+							      <span class="input-group-text">USDT</span>		    	
+							      <input type="number" class="form-control" name="montoOperacion" id="montoOperacion" size="2" step="0.01" aria-label="Amount (to the nearest dollar)">
+							    </div>
+					    </div>
+
+
+
+					    <fieldset class="form-group">
+					      <legend class="mt-4">Tendencia del Mercado: </legend>
+					      <div class="form-check">
+					        <input class="form-check-input" type="radio" name="tendencia" id="alza" value="alzista" checked="checked">
+					        <label class="form-check-label" for="alza">
+					          Alzista
+					        </label>
+					      </div>
+					      <div class="form-check">
+					        <input class="form-check-input" type="radio" name="tendencia" id="baja" value="bajista">
+					        <label class="form-check-label" for="baja">
+					          Bajista
+					        </label>
+					      </div>
+					      <div class="form-check">
+					        <input class="form-check-input" type="radio" name="tendencia" id="estable" value="estable">
+					        <label class="form-check-label" for="estable">
+					          Estable
+					        </label>
+					      </div>      
+					    </fieldset>
+
+
+					    <fieldset class="form-group">
+					      <legend class="mt-4">Stop Loss</legend>
+					      <div class="form-check">
+					        <input class="form-check-input" type="radio" name="stoploss" id="sl1" value="desactivado" >
+					        <label class="form-check-label" for="sl1">
+					          Desactivado
+					        </label>
+					      </div>
+					      <div class="form-check">
+					        <input class="form-check-input" type="radio" name="stoploss" id="sl2" value="activado" checked="checked">
+					        <label class="form-check-label" for="sl2">
+					          Activado
+					        </label>
+					      </div>
+
+					      <div class="input-group mb-3 ">
+					      	 	<span class="input-group-text">     </span>
+							      <input type="number" class="form-control" name="stop" id="stop" size="1" step="0.01" >
+							      <span class="input-group-text">%</span>
+						   </div>
+					    </fieldset>
+
+
+					    <button type="submit" class="btn btn-outline-success mt-2 mb-4">Confirmar Orden de Operación</button>
+					  </fieldset>
+					</form>
+
+			</div>
+
+    <script>
+    let sldes = document.getElementById("sl1")
+    let slact = document.getElementById("sl2")
+    let slprecio = document.getElementById("stop")
+    
+    slact.addEventListener("click", () => {
+      slprecio.disabled = false;
+      slprecio.style.backgroundColor = 'transparent';
+ 
+    })
+    sldes.addEventListener("click", () => {
+      slprecio.disabled = true;
+        slprecio.style.backgroundColor = '#eceff0';
+    })
+    </script>
+
+
+		<div class="col-md-7 offset-md-1 mt-4 mb-3" style="background-color: #54c8a3;">
+
+			<h3>A cerca de cada Item:</h3>
+			<br>
+
+			<div class="accordion" id="accordionExample">
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="headingOne">
+			      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+			        Monto de Inicio:
+			      </button>
+			    </h2>
+			    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+			      <div class="accordion-body">
+			        <strong>Este es el monto que destinamos para nuestro Trading.</strong> Es el monto en USDT que vamos a destinar para estre proceso de tranding, es decir, por mas que en nuestra billetera tengamos un monto superior, el que colocamos en esta entrada es el que Miautotradingbot considera como máximo para operar. 
+			      </div>
+			    </div>
+			  </div>
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="headingTwo">
+			      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+			        Precio Inicial:
+			      </button>
+			    </h2>
+			    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+			      <div class="accordion-body">
+			        <strong>Precio de inicio de Operaciones de Trading.</strong> Este es el precio que se espera para comenzar las operaciones de Trading. Cuando el precio del activo llega a este valor comienza el juego !
+			      </div>
+			    </div>
+			  </div>
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="headingThree">
+			      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+			        Tipo de Orden:
+			      </button>
+			    </h2>
+			    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+			      <div class="accordion-body">
+			        <strong>Prefiere comenzar con una orden de Compra o una de Venta?.</strong> Por lo general se comienza con ordenes de Compra, pero exite el caso en que se tenga un monto del criptoactivo con el que se quiere operar en la Billetera, y se prefiere comenzar venidendolo.
+			      </div>
+			    </div>
+			  </div>
+
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="headingFour">
+			      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+			        Margen de Operación:
+			      </button>
+			    </h2>
+			    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+			      <div class="accordion-body">
+			        <strong>Porcentaje con el que se desea realizar las operaciones de Trading.</strong> Cuando se realiza una orden de compra o venta, se ejecutan las operaciones en consecuencia correspondientes a los precios superiores e inferiores establecidos por ese margen de operacion con respecto al precio actual. 
+			      </div>
+			    </div>
+			  </div>
+
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="headingFive">
+			      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+			        Monto de Operación:
+			      </button>
+			    </h2>
+			    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+			      <div class="accordion-body">
+			        <strong>Cuanto dinero deseo emplear para cada Operación.</strong> Cuanto dinero del cargado en "Monto de Inicio" deseo emplear por cada margen de operación. Es decir, cada compra que se concrete se hará con la suma cargada en este casillero. 
+			      </div>
+			    </div>
+			  </div>	
+
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="headingSix">
+			      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+			        Tendencia del Mercado:
+			      </button>
+			    </h2>
+			    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+			      <div class="accordion-body">
+			        <strong>Definimos los márgenes de operación según la tendencia del Mercado.</strong> Esto modifica una parte del procentaje que cargamos en "Margen de Operacion" para sacarle mejor provecho a la tendencia del mercado. Ante un mercado Alzista las ventas se haran a un porcentaje superior en un 50% al cargado en "Margen de Operación". Si el mercado es Bajista las Compras  se haran a un porcentaje superior en un 50% al cargado en "Margen de Operación". Y si el mercado es Estable se respetarán los margenes cargados en "Margen de Operación". 
+ 			      </div>
+			    </div>
+			  </div>	
+
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="headingSeven">
+			      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+			        Stop Loss:
+			      </button>
+			    </h2>
+			    <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#accordionExample">
+			      <div class="accordion-body">
+			        <strong>Activar o no el Stop Loss.</strong> Podemos dejar el Stop Loss desactivado. En caso de activarlo debemos cargar el porcentaje con el cual queremos que se ejecute. Con un precio por debajo de ese porcentaje al precio que cargamos en "Precio Inicial", se activará el Stop Loss vendiendo todas las ordenes que tenemos.  
+ 			      </div>
+			    </div>
+			  </div>				  		  		  
+
+			</div>
+		</div>
+
+
+
+
+			</div>
+
+</div>
+
+
+

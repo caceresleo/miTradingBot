@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nodejs Passport Local</title>
+
+<script type="text/javascript" src="./jquery.js"></script>    
+<link rel="stylesheet" type="text/css" href="./bootstrap.min.morph.css">
+    <link type="text/css" rel="stylesheet" href="/signingupin.css" >
+
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+    <% if (!user) { %>
+            <ul class="nav justify-content-end  text-bg-light " >
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Inicio</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/signin">Ingresar</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/signup">Registrarse</a>
+              </li>
+            </ul>
+    <% } else { %>
+
+             <ul class="nav justify-content-end text-bg-light ">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/inicio">Inicio</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Salir</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/profile">Perfil</a>
+              </li>
+              <br>
+              <li class=" ml-4">
+                <p>¡Hola <%= user.alias %> ! </p>
+              </li>
+            </ul>
+
+     <% } %>
+
+     <div class="container col-md-12 mt-4">
+     <%if (signinMessage.length > 0) {%>
+          <div class="alert alert-danger"><p><%= signinMessage %></p></div>
+     <% } %>
+     <%if (signupMessage.length > 0) {%>
+        <div class="alert alert-danger"><p><%= signupMessage %></p></div>
+     <% } %>       
+
+     </div>
+ <% if (user) { %>
+  <%- include("../orejetas" )%>   
+<% } %>
+
+  <!-- EN BODY SE INCLUYE EL CODIGO QUE NO SE REPITE -->
+<div class="container col-md-12 mb-4" style="background: rgba(255, 255, 255, 0.8);">   
+  <%- body %>
+
+</div>
+
+<script>
+
+  document.body.style.backgroundColor = "#f3f3f3";
+  document.body.style.backgroundImage = "url('./icons/velas.jpg')";
+  document.body.style.backgroundsize = "cover";
+  document.body.style.backgroundrepeat = "no-repeat";
+    document.body.style.backgroundposition = "center";
+
+
+</script>
+<script type="text/javascript" src = "./bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src = "./elementos.js"></script>
+
+</body>
+
+</html>
+
+
